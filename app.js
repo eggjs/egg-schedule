@@ -28,7 +28,7 @@ module.exports = app => {
     // run with anonymous context
     const ctx = app.createAnonymousContext({
       method: 'SCHEDULE',
-      url: `/__schedules/${schedulePath}?${qs.stringify(schedule.schedule)}`,
+      url: `/__schedule?path=${schedulePath}&${qs.stringify(schedule.schedule)}`,
     });
     return schedule.task(ctx);
   };
@@ -46,7 +46,7 @@ module.exports = app => {
       // run with anonymous context
       const ctx = app.createAnonymousContext({
         method: 'SCHEDULE',
-        url: `/__schedules/${s}?${qs.stringify(schedule.schedule)}`,
+        url: `/__schedule?path=${s}&${qs.stringify(schedule.schedule)}`,
       });
 
       const start = Date.now();

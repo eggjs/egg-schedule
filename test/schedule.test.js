@@ -28,8 +28,10 @@ describe('test/schedule.test.js', () => {
       const log = getLogContent('context');
       console.log(log);
       log.should.match(/method: SCHEDULE/);
-      log.should.match(/path: \/__schedules(.*?)sub\/cron\.js/);
-      log.should.containEql('query: {"type":"worker","cron":"*/5 * * * * *"}');
+      log.should.match(/path: \/__schedule/);
+      log.should.match(/(.*?)sub\/cron\.js/);
+      log.should.match(/"type":"worker"/);
+      log.should.match(/"cron":"\*\/5 \* \* \* \* \*"/);
       log.should.match(/hello busi/);
     });
   });

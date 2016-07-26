@@ -1,9 +1,5 @@
 'use strict';
 
-/**
- * Module dependencies.
- */
-
 const mm = require('egg-mock');
 const path = require('path');
 const fs = require('fs');
@@ -150,6 +146,14 @@ describe('test/schedule.test.js', () => {
       const log = getLogContent('worker');
       console.log(log);
       contains(log, 'cron').should.equal(1);
+      app.close();
+    });
+
+    it('should run schedule by absolute package path success', function* () {
+      const app = mm.app({ baseDir: 'worker', cache: false });
+      yield app.ready();
+      console.log(require.resolve('egg/node_modules/egg-logrotater/app/schedule/rotateByFile.js'));
+      yield app.runSchedule(require.resolve('egg/node_modules/egg-logrotater/app/schedule/rotateByFile.js'));
       app.close();
     });
   });

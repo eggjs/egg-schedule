@@ -6,7 +6,7 @@ const ms = require('humanize-ms');
 
 const SCHEDULE_HANDLER = Symbol.for('egg#scheduleHandler');
 
-module.exports = function(agent) {
+module.exports = agent => {
   // add handler into `agent[SCHEDULE_HANDLER]` for extend other kind of schedule type.
   // worker: will excute in one random worker when schedule excuted.
   // all: will excute in all workers when schedule excuted.

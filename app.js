@@ -4,19 +4,18 @@ const loadSchedule = require('./lib/load_schedule');
 const qs = require('querystring');
 const path = require('path');
 
-module.exports = function(app) {
+module.exports = app => {
   const schedules = loadSchedule(app);
 
   // for test purpose
-  app.runSchedule = function(schedulePath) {
+  app.runSchedule = schedulePath => {
     if (!path.isAbsolute(schedulePath)) {
       schedulePath = path.join(app.config.baseDir, 'app/schedule', schedulePath);
     }
+    schedulePath = require.resolve(schedulePath);
     let schedule;
 
     try {
-      schedulePath = require.resolve(schedulePath);
-      schedulePath = path.relative(app.config.baseDir, schedulePath);
       schedule = schedules[schedulePath];
       if (!schedule) {
         throw new Error(`Cannot find schedule ${schedulePath}`);

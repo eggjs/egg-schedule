@@ -34,6 +34,19 @@ describe('test/schedule.test.js', () => {
       log.should.match(/"cron":"\*\/5 \* \* \* \* \*"/);
       log.should.match(/hello busi/);
     });
+
+    it('should support immediate', function* () {
+      const app = mm.cluster({ baseDir: 'immediate', workers: 2 });
+      yield app.ready();
+      console.log('app ready now !!!!!');
+      yield sleep(5000);
+      app.close();
+      const log = getLogContent('immediate');
+      console.log(log);
+      // because app.ready() is after agent.ready(), ci may need some more times
+      contains(log, 'immediate-interval').should.within(2, 3);
+      contains(log, 'immediate-cron').should.within(1, 2);
+    });
   });
 
   describe('schedule type all', () => {
@@ -64,7 +77,7 @@ describe('test/schedule.test.js', () => {
     });
   });
 
-  describe('csutom schedule type', () => {
+  describe('custom schedule type', () => {
     it('should set agent[SCHEDULE_HANDLER] work', function* () {
       const app = mm.cluster({ baseDir: 'customType', workers: 2 });
       yield app.ready();

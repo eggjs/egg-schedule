@@ -85,6 +85,10 @@ function baseHander(schedule, send) {
     }
     startCron(interval, send);
   }
+
+  if (schedule.immediate) {
+    setImmediate(send);
+  }
 }
 
 function startCron(interval, listener) {

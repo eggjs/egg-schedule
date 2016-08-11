@@ -30,7 +30,158 @@ $ npm i egg-schedule --save
 
 ## Usage
 
-TBD
+`egg-schedule` is egg build-in plugin, so you don't need to enable it manually.
+
+```javascript
+// {app_root}/config/plugin.js
+exports.view = {
+  package: 'egg-schedule',
+};
+
+// {app_root}/app/schedule/cleandb.js
+/**
+* @property {Object} schedule
+*  - {String} type - schedule type, build-in support is `worker/all`
+*  - {String} [cron] - cron expression, see below
+*  - {String/Number} [interval] - interval expression, support ms style, see below
+*  - {Boolean} [immediate] - whether run at start
+*  - {Boolean} [disable] - whether to disable schedule, usually use at dynamic schedule
+*/
+exports.schedule = {
+  type: 'worker',
+  cron: '0 0 3 * * *',
+  // interval: '1h',
+  // immediate: true,
+};
+
+exports.task = function* (ctx) {
+  yield ctx.service.db.cleandb();
+};
+```
+
+## Overview
+
+`egg-schedule` is for time-based scheduling, not interval-based scheduling.  
+
+Just put your jobs at `{app_root}/app/schedule`, one file as one job.  
+
+Job file should export `schedule` and `task` properties.
+
+## Task
+Task should be a generator function, and accept ctx as params.
+
+You can find schedule log at log file, which act like worker request, and contain:
+- ctx.method: `SCHEDULE`
+- ctx.path: `/__schedules/${schedulePath}`
+- ctx.query: `scheule config(type=worker&cron=*%2F5%20*%20*%20*%20*%20*)`
+
+example:
+```javascript
+exports.task = function* (ctx) {
+  yield ctx.service.db.cleandb();
+};
+```
+
+## Scheduling
+`schedule` property is an object which contain `{ type, cron, interval, immediate }`.
+
+### Cron-style Scheduling
+
+Use [cron-parser](https://github.com/harrisiirak/cron-parser).
+
+> Notify: `cron-parser` support `second` as optional which is not supported by linux crontab.
+> 
+> `@hourly / @daily / @weekly / @monthly / @yearly` is also supported.
+
+```
+*    *    *    *    *    *
+┬    ┬    ┬    ┬    ┬    ┬
+│    │    │    │    │    |
+│    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)
+│    │    │    │    └───── month (1 - 12)
+│    │    │    └────────── day of month (1 - 31)
+│    │    └─────────────── hour (0 - 23)
+│    └──────────────────── minute (0 - 59)
+└───────────────────────── second (0 - 59, optional)
+```
+
+example:
+```javascript
+// exce task every 3 hours
+exports.schedule = {
+  type: 'worker',
+  cron: '0 0 */3 * * *',
+};
+```
+
+### Interval-style Scheduling
+
+Use `setInterval`, and support [ms](https://www.npmjs.com/package/ms) conversion style
+
+example:
+```javascript
+// exce task every 3 hours
+exports.schedule = {
+  type: 'worker',
+  interval: '3h',
+};
+```
+
+### Schedule Type
+Build-in support is:
+  - worker: will execute in one random worker when schedule executed.
+  - all: will execute in all workers when schedule executed.
+
+You can extend it by: 
+
+```javascript
+// {app_root}/agent.js
+const SCHEDULE_HANDLER = Symbol.for('egg#scheduleHandler');
+
+module.exports = agent => {
+  agent[SCHEDULE_HANDLER].custom = (schedule, sender) => {
+    // sender.one() - will notify one random worker to execute task
+    // sender.all() - will notify all workers
+    setInterval(sender.one, schedule.interval);
+  };
+};
+
+// {app_root}/app/schedule/other.js
+exports.schedule = {
+  type: 'custom',
+};
+```
+
+## Dynamic schedule
+
+```javascript
+// {app_root}/app/schedule/sync.js
+module.exports = app => {
+  exports.schedule = {
+    interval: 10000,
+    type: 'worker',
+    disable: require('os').hostname() !== app.config.sync.hostname, // only start task when hostname match
+  };
+
+  exports.task = function* (ctx) {
+    yield ctx.sync();
+  };
+
+  return exports;
+};
+```
+
+## Testing
+
+`app.runSchedule(scheduleName)` is provided for easy testing, have fun.
+
+example:
+```javascript
+it('test schedule task', function* () {
+  // get app instance
+  yield app.runSchedule('clean_cache');  
+});
+```
 
 ## Questions & Suggestions
 

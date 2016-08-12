@@ -67,17 +67,27 @@ To setup a schedule task, simply create a job file in `{app_root}/app/schedule`.
 
 ## Task
 
-Task is a generator function, and accept one parameter, `ctx`. ex: `exports.task = function* (ctx) { ... };`
+Task is a generator function, and accept one parameter, `ctx`. The syntax is, `exports.task = function* (ctx) { ... };`
 
-You can find schedule log at log file, which act like worker request, and contain:
+After the scheduled task runs, the scheduled job information will be logged and written to a local file in a folder called `/logs`. The log file contains many useful information, for example,
 
 - ctx.method: `SCHEDULE`
-- ctx.path: `/__schedules/${schedulePath}`
+- ctx.path: `/__schedule/${schedulePath}`. example path: `/__schedule?path=/FULL_PATH_TO/cleandb.js&type=worker&interval=3h`
 - ctx.query: `scheule config(type=worker&cron=*%2F5%20*%20*%20*%20*%20*)`
 
-Example:
+
+To create a task, it is as simple as write a generator function. For example:
 
 ```javascript
+// A simple logger example
+exports.task = function* (ctx) {
+  ctx.logger.info('Info about your task');
+};
+```
+
+```javascript
+// A real world example: wipe out your database.
+// Use it with caution. :)
 exports.task = function* (ctx) {
   yield ctx.service.db.cleandb();
 };

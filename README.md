@@ -143,12 +143,14 @@ exports.schedule = {
 
 ### Schedule Type
 
-Build-in support is:
+**Build-in support is:**
 
   - **worker**: will be executed in one random worker when schedule run.
   - **all**: will be executed in all workers when schedule run.
 
-**Custom schedule by extending the base schedule**
+**Custom schedule**
+
+To create a custom schedule, simply create a schedule with a type `custom` and its corresponding method. Inside your custom method, you can schedule the task to be executed by one random worker or all workers with the built-in method `sender.one()` or `sender.all()`.
 
 ```javascript
 // {app_root}/agent.js

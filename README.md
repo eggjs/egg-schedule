@@ -63,10 +63,11 @@ exports.task = function* (ctx) {
 
 `egg-schedule` supports both time-based scheduling and interval-based scheduling.
 
-Schedule plan is calculated at `agent` process, and task is executed at `worker` process (one or all due to schedule type).  
-So when trigger, `agent` will send a message to `worker`.
+Schedule decision is being made by `agent` process. `agent` triggers a task and sends message to `worker` process. Then, one or all `worker` process(es) execute the task based on schedule type.
 
-To setup a schedule task, simply create a job file in `{app_root}/app/schedule`. A file contains one job and should export `schedule` and `task` properties. The rule of thumbs is one job per file.
+To setup a schedule task, simply create a job file in `{app_root}/app/schedule`. A file contains one job and export `schedule` and `task` properties.
+
+The rule of thumbs is one job per file.
 
 ## Task
 

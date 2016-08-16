@@ -1,5 +1,0 @@
-'use strict';
-
-exports.schedule = {
-
-};

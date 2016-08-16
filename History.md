@@ -1,4 +1,10 @@
 
+2.0.0 / 2016-08-16
+==================
+
+  * Revert "Release 1.1.1"
+  * refactor: use loader.getLoadUnits from egg-core (#6)
+
 1.1.0 / 2016-08-15
 ==================
 

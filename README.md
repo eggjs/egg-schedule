@@ -73,7 +73,7 @@ The rule of thumbs is one job per file.
 
 Task is a generator function, and accept one parameter, `ctx`. The syntax is, `exports.task = function* (ctx) { ... };`
 
-After the scheduled task runs, the scheduled job information will be logged and written to a local file in a folder called `/logs`. The log file contains many useful information, for example,
+When the scheduled task runs, the scheduled job information will be logged and written to a local file in a folder called `/logs`. The log file contains many useful information, for example,
 
 - ctx.method: `SCHEDULE`
 - ctx.path: `/__schedule/${schedulePath}`. example path: `/__schedule?path=/FULL_PATH_TO/cleandb.js&type=worker&interval=3h`
@@ -195,7 +195,7 @@ module.exports = app => {
 
 ## Testing
 
-`app.runSchedule(scheduleName)` is provided by `egg-schedule` plugin.
+`app.runSchedule(scheduleName)` is provided by `egg-schedule` plugin only for test purpose.
 
 Example:
 

@@ -1,3 +1,3 @@
 'use strict';
 
-exports.logrotater = true;
+exports.logrotator = true;

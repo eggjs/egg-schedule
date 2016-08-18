@@ -1,4 +1,9 @@
 
+2.1.0 / 2016-08-18
+==================
+
+  * refactor: use FileLoader to load schedule files (#7)
+
 2.0.0 / 2016-08-16
 ==================
 

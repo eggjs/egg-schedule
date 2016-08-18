@@ -167,8 +167,8 @@ describe('test/schedule.test.js', () => {
     it('should run schedule by absolute package path success', function* () {
       const app = mm.app({ baseDir: 'worker', cache: false });
       yield app.ready();
-      console.log(require.resolve('egg/node_modules/egg-logrotater/app/schedule/rotateByFile.js'));
-      yield app.runSchedule(require.resolve('egg/node_modules/egg-logrotater/app/schedule/rotateByFile.js'));
+      console.log(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
+      yield app.runSchedule(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
       app.close();
     });
   });

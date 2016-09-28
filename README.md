@@ -34,7 +34,7 @@ $ npm i egg-schedule --save
 
 ```javascript
 // {app_root}/config/plugin.js
-exports.view = {
+exports.schedule = {
   package: 'egg-schedule'
 };
 

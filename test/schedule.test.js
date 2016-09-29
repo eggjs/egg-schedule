@@ -3,7 +3,7 @@
 const mm = require('egg-mock');
 const path = require('path');
 const fs = require('fs');
-require('should');
+const should = require('should');
 
 describe('test/schedule.test.js', () => {
   describe('schedule type worker', () => {
@@ -209,6 +209,17 @@ describe('test/schedule.test.js', () => {
       app.close();
     });
   });
+
+
+  describe('export schedules', () => {
+    it('should export app.schedules', function* () {
+      const app = mm.app({ baseDir: 'worker' });
+      yield app.ready();
+      should.exist(app.schedules);
+      app.close();
+    });
+  });
+
 });
 
 function sleep(time) {

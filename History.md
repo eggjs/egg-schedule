@@ -1,4 +1,10 @@
 
+2.2.0 / 2016-09-29
+==================
+
+  * feat: export app.schedules (#9)
+  * doc:fix plugin.js config demo (#8)
+
 2.1.0 / 2016-08-18
 ==================
 

@@ -15,7 +15,7 @@ module.exports = agent => {
     all: allHander,
   };
 
-  agent.ready(startSchedule);
+  agent.messenger.once('egg-ready', startSchedule);
 
   function startSchedule() {
     agent.disableSchedule = false;

@@ -15,9 +15,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('worker');
       console.log(log);
-      // because app.ready() is after agent.ready(), ci may need some more times
-      contains(log, 'interval').should.within(2, 3);
-      contains(log, 'cron').should.within(1, 2);
+      contains(log, 'interval').should.equal(1);
+      contains(log, 'cron').should.equal(1);
     });
 
     it('should support context', function* () {
@@ -43,9 +42,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('immediate');
       console.log(log);
-      // because app.ready() is after agent.ready(), ci may need some more times
-      contains(log, 'immediate-interval').should.within(2, 3);
-      contains(log, 'immediate-cron').should.within(1, 2);
+      contains(log, 'immediate-interval').should.equal(2);
+      contains(log, 'immediate-cron').should.equal(2);
     });
   });
 
@@ -57,9 +55,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('all');
       console.log(log);
-      // because app.ready() is after agent.ready(), ci may need some more times
-      contains(log, 'interval').should.within(4, 6);
-      contains(log, 'cron').should.within(2, 4);
+      contains(log, 'interval').should.equal(2);
+      contains(log, 'cron').should.equal(2);
     });
   });
 
@@ -71,9 +68,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('plugin');
       console.log(log);
-      // because app.ready() is after agent.ready(), ci may need some more times
-      contains(log, 'interval').should.within(2, 3);
-      contains(log, 'cron').should.within(1, 2);
+      contains(log, 'interval').should.equal(1);
+      contains(log, 'cron').should.equal(1);
     });
   });
 
@@ -85,7 +81,7 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('customType');
       console.log(log);
-      contains(log, 'custom').should.within(2, 3);
+      contains(log, 'custom').should.equal(1);
     });
   });
 
@@ -126,7 +122,7 @@ describe('test/schedule.test.js', () => {
       yield sleep(5000);
       app.close();
       const errorLog = getErrorLogContent('excuteError');
-      contains(errorLog, 'excute error').should.within(2, 3);
+      contains(errorLog, 'excute error').should.equal(2);
     });
   });
 
@@ -193,9 +189,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('dynamic');
       console.log(log);
-      // because app.ready() is after agent.ready(), ci may need some more times
       contains(log, 'interval').should.equal(0);
-      contains(log, 'cron').should.within(1, 2);
+      contains(log, 'cron').should.equal(1);
     });
 
     it('should support run disabled dynamic schedule', function* () {

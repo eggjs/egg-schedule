@@ -3,7 +3,7 @@
 module.exports = function(app) {
   exports.schedule = {
     type: 'worker',
-    interval: 2500,
+    interval: 4000,
     disable: app.config.disable,
   };
 

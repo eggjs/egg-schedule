@@ -2,7 +2,7 @@
 
 exports.schedule = {
   type: 'worker',
-  interval: 2000,
+  interval: 4000,
 };
 
 exports.task = function* (ctx) {

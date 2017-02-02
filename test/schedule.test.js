@@ -3,7 +3,8 @@
 const mm = require('egg-mock');
 const path = require('path');
 const fs = require('fs');
-const should = require('should');
+const assert = require('assert');
+
 
 describe('test/schedule.test.js', () => {
   describe('schedule type worker', () => {
@@ -15,8 +16,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('worker');
       console.log(log);
-      contains(log, 'interval').should.equal(1);
-      contains(log, 'cron').should.equal(1);
+      assert(contains(log, 'interval') === 1);
+      assert(contains(log, 'cron') === 1);
     });
 
     it('should support context', function* () {
@@ -26,12 +27,12 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('context');
       console.log(log);
-      log.should.match(/method: SCHEDULE/);
-      log.should.match(/path: \/__schedule/);
-      log.should.match(/(.*?)sub\/cron\.js/);
-      log.should.match(/"type":"worker"/);
-      log.should.match(/"cron":"\*\/5 \* \* \* \* \*"/);
-      log.should.match(/hello busi/);
+      assert(/method: SCHEDULE/.test(log));
+      assert(/path: \/__schedule/.test(log));
+      assert(/(.*?)sub\/cron\.js/.test(log));
+      assert(/"type":"worker"/.test(log));
+      assert(/"cron":"\*\/5 \* \* \* \* \*"/.test(log));
+      assert(/hello busi/.test(log));
     });
 
     it('should support immediate', function* () {
@@ -42,8 +43,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('immediate');
       console.log(log);
-      contains(log, 'immediate-interval').should.equal(2);
-      contains(log, 'immediate-cron').should.equal(2);
+      assert(contains(log, 'immediate-interval') === 2);
+      assert(contains(log, 'immediate-cron') === 2);
     });
   });
 
@@ -55,8 +56,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('all');
       console.log(log);
-      contains(log, 'interval').should.equal(2);
-      contains(log, 'cron').should.equal(2);
+      assert(contains(log, 'interval') === 2);
+      assert(contains(log, 'cron') === 2);
     });
   });
 
@@ -68,8 +69,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('plugin');
       console.log(log);
-      contains(log, 'interval').should.equal(1);
-      contains(log, 'cron').should.equal(1);
+      assert(contains(log, 'interval') === 1);
+      assert(contains(log, 'cron') === 1);
     });
   });
 
@@ -81,7 +82,7 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('customType');
       console.log(log);
-      contains(log, 'custom').should.equal(1);
+      assert(contains(log, 'custom') === 1);
     });
   });
 
@@ -90,7 +91,7 @@ describe('test/schedule.test.js', () => {
       const app = mm.cluster({ baseDir: 'scheduleError', workers: 2 });
       yield app.ready();
       yield sleep(1000);
-      getErrorLogContent('scheduleError').should.match(/\[egg-schedule\] schedule\.interval or schedule\.cron must be present/);
+      assert(/\[egg-schedule\] schedule\.interval or schedule\.cron must be present/.test(getErrorLogContent('scheduleError')));
       app.close();
     });
   });
@@ -100,7 +101,7 @@ describe('test/schedule.test.js', () => {
       const app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
       yield app.ready();
       yield sleep(1000);
-      getErrorLogContent('typeUndefined').should.match(/schedule type \[undefined\] is not defined/);
+      assert(/schedule type \[undefined\] is not defined/.test(getErrorLogContent('typeUndefined')));
       app.close();
     });
   });
@@ -110,7 +111,7 @@ describe('test/schedule.test.js', () => {
       const app = mm.cluster({ baseDir: 'cronError', workers: 2 });
       yield app.ready();
       yield sleep(1000);
-      getErrorLogContent('cronError').should.match(/parse cron instruction\(invalid instruction\) error/);
+      assert(/parse cron instruction\(invalid instruction\) error/.test(getErrorLogContent('cronError')));
       app.close();
     });
   });
@@ -122,7 +123,7 @@ describe('test/schedule.test.js', () => {
       yield sleep(5000);
       app.close();
       const errorLog = getErrorLogContent('excuteError');
-      contains(errorLog, 'excute error').should.equal(2);
+      assert(contains(errorLog, 'excute error') === 2);
     });
   });
 
@@ -134,7 +135,7 @@ describe('test/schedule.test.js', () => {
         yield app.runSchedule(__filename);
         throw new Error('should not excute');
       } catch (err) {
-        err.message.should.containEql('Cannot find schedule');
+        assert(err.message.includes('Cannot find schedule'));
       }
       app.close();
     });
@@ -145,7 +146,7 @@ describe('test/schedule.test.js', () => {
       yield app.runSchedule('sub/cron');
       const log = getLogContent('worker');
       console.log(log);
-      contains(log, 'cron').should.equal(1);
+      assert(contains(log, 'cron') === 1);
       app.close();
     });
 
@@ -156,7 +157,7 @@ describe('test/schedule.test.js', () => {
       yield app.runSchedule(schedulePath);
       const log = getLogContent('worker');
       console.log(log);
-      contains(log, 'cron').should.equal(1);
+      assert(contains(log, 'cron') === 1);
       app.close();
     });
 
@@ -177,7 +178,7 @@ describe('test/schedule.test.js', () => {
       yield sleep(10000);
       const log = getLogContent('stop');
       console.log(log);
-      contains(log, 'interval').should.equal(0);
+      assert(contains(log, 'interval') === 0);
     });
   });
 
@@ -189,8 +190,8 @@ describe('test/schedule.test.js', () => {
       app.close();
       const log = getLogContent('dynamic');
       console.log(log);
-      contains(log, 'interval').should.equal(0);
-      contains(log, 'cron').should.equal(1);
+      assert(contains(log, 'interval') === 0);
+      assert(contains(log, 'cron') === 1);
     });
 
     it('should support run disabled dynamic schedule', function* () {
@@ -200,7 +201,7 @@ describe('test/schedule.test.js', () => {
 
       const log = getLogContent('dynamic');
       console.log(log);
-      contains(log, 'interval').should.equal(1);
+      assert(contains(log, 'interval') === 1);
       app.close();
     });
   });
@@ -210,7 +211,7 @@ describe('test/schedule.test.js', () => {
     it('should export app.schedules', function* () {
       const app = mm.app({ baseDir: 'worker' });
       yield app.ready();
-      should.exist(app.schedules);
+      assert(app.schedules);
       app.close();
     });
   });

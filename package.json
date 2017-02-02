@@ -18,7 +18,6 @@
     "egg",
     "egg-plugin",
     "eggPlugin",
-    "plugin",
     "schedule",
     "cron"
   ],

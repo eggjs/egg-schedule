@@ -7,13 +7,15 @@ const assert = require('assert');
 
 
 describe('test/schedule.test.js', () => {
+  let app;
+  afterEach(() => app.close());
+
   describe('schedule type worker', () => {
     it('should support interval and cron', function* () {
-      const app = mm.cluster({ baseDir: 'worker', workers: 2 });
+      app = mm.cluster({ baseDir: 'worker', workers: 2 });
       yield app.ready();
       console.log('app ready now !!!!!');
       yield sleep(5000);
-      app.close();
       const log = getLogContent('worker');
       console.log(log);
       assert(contains(log, 'interval') === 1);
@@ -21,10 +23,9 @@ describe('test/schedule.test.js', () => {
     });
 
     it('should support context', function* () {
-      const app = mm.cluster({ baseDir: 'context', workers: 2 });
+      app = mm.cluster({ baseDir: 'context', workers: 2 });
       yield app.ready();
       yield sleep(5000);
-      app.close();
       const log = getLogContent('context');
       console.log(log);
       assert(/method: SCHEDULE/.test(log));
@@ -36,11 +37,10 @@ describe('test/schedule.test.js', () => {
     });
 
     it('should support immediate', function* () {
-      const app = mm.cluster({ baseDir: 'immediate', workers: 2 });
+      app = mm.cluster({ baseDir: 'immediate', workers: 2 });
       yield app.ready();
       console.log('app ready now !!!!!');
       yield sleep(5000);
-      app.close();
       const log = getLogContent('immediate');
       console.log(log);
       assert(contains(log, 'immediate-interval') === 2);
@@ -50,10 +50,9 @@ describe('test/schedule.test.js', () => {
 
   describe('schedule type all', () => {
     it('should support interval and cron', function* () {
-      const app = mm.cluster({ baseDir: 'all', workers: 2 });
+      app = mm.cluster({ baseDir: 'all', workers: 2 });
       yield app.ready();
       yield sleep(5000);
-      app.close();
       const log = getLogContent('all');
       console.log(log);
       assert(contains(log, 'interval') === 2);
@@ -63,10 +62,9 @@ describe('test/schedule.test.js', () => {
 
   describe('schedule in plugin', () => {
     it('should support interval and cron', function* () {
-      const app = mm.cluster({ baseDir: 'plugin', workers: 2 });
+      app = mm.cluster({ baseDir: 'plugin', workers: 2 });
       yield app.ready();
       yield sleep(5000);
-      app.close();
       const log = getLogContent('plugin');
       console.log(log);
       assert(contains(log, 'interval') === 1);
@@ -76,10 +74,9 @@ describe('test/schedule.test.js', () => {
 
   describe('custom schedule type', () => {
     it('should set agent[SCHEDULE_HANDLER] work', function* () {
-      const app = mm.cluster({ baseDir: 'customType', workers: 2 });
+      app = mm.cluster({ baseDir: 'customType', workers: 2 });
       yield app.ready();
       yield sleep(5000);
-      app.close();
       const log = getLogContent('customType');
       console.log(log);
       assert(contains(log, 'custom') === 1);
@@ -88,40 +85,36 @@ describe('test/schedule.test.js', () => {
 
   describe('schedule config error', () => {
     it('should thrown', function* () {
-      const app = mm.cluster({ baseDir: 'scheduleError', workers: 2 });
+      app = mm.cluster({ baseDir: 'scheduleError', workers: 2 });
       yield app.ready();
       yield sleep(1000);
       assert(/\[egg-schedule\] schedule\.interval or schedule\.cron must be present/.test(getErrorLogContent('scheduleError')));
-      app.close();
     });
   });
 
   describe('schedule type undefined', () => {
     it('should thrown', function* () {
-      const app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
+      app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
       yield app.ready();
       yield sleep(1000);
       assert(/schedule type \[undefined\] is not defined/.test(getErrorLogContent('typeUndefined')));
-      app.close();
     });
   });
 
   describe('schedule cron instruction invalid', () => {
     it('should thrown', function* () {
-      const app = mm.cluster({ baseDir: 'cronError', workers: 2 });
+      app = mm.cluster({ baseDir: 'cronError', workers: 2 });
       yield app.ready();
       yield sleep(1000);
       assert(/parse cron instruction\(invalid instruction\) error/.test(getErrorLogContent('cronError')));
-      app.close();
     });
   });
 
   describe('schedule excute error', () => {
     it('should thrown', function* () {
-      const app = mm.cluster({ baseDir: 'excuteError', workers: 2 });
+      app = mm.cluster({ baseDir: 'excuteError', workers: 2 });
       yield app.ready();
       yield sleep(5000);
-      app.close();
       const errorLog = getErrorLogContent('excuteError');
       assert(contains(errorLog, 'excute error') === 2);
     });
@@ -129,7 +122,7 @@ describe('test/schedule.test.js', () => {
 
   describe('app.runSchedule', () => {
     it('should run schedule not exist throw error', function* () {
-      const app = mm.app({ baseDir: 'worker', cache: false });
+      app = mm.app({ baseDir: 'worker', cache: false });
       yield app.ready();
       try {
         yield app.runSchedule(__filename);
@@ -137,44 +130,39 @@ describe('test/schedule.test.js', () => {
       } catch (err) {
         assert(err.message.includes('Cannot find schedule'));
       }
-      app.close();
     });
 
     it('should run schedule by relative path success', function* () {
-      const app = mm.app({ baseDir: 'worker', cache: false });
+      app = mm.app({ baseDir: 'worker', cache: false });
       yield app.ready();
       yield app.runSchedule('sub/cron');
       const log = getLogContent('worker');
       console.log(log);
       assert(contains(log, 'cron') === 1);
-      app.close();
     });
 
     it('should run schedule by absolute path success', function* () {
-      const app = mm.app({ baseDir: 'worker', cache: false });
+      app = mm.app({ baseDir: 'worker', cache: false });
       yield app.ready();
       const schedulePath = path.join(__dirname, 'fixtures/worker/app/schedule/sub/cron.js');
       yield app.runSchedule(schedulePath);
       const log = getLogContent('worker');
       console.log(log);
       assert(contains(log, 'cron') === 1);
-      app.close();
     });
 
     it('should run schedule by absolute package path success', function* () {
-      const app = mm.app({ baseDir: 'worker', cache: false });
+      app = mm.app({ baseDir: 'worker', cache: false });
       yield app.ready();
       console.log(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
       yield app.runSchedule(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
-      app.close();
     });
   });
 
   describe('stop schedule', () => {
     it('should stop schedule after app closed', function* () {
-      const app = mm.cluster({ baseDir: 'stop', workers: 2 });
+      app = mm.cluster({ baseDir: 'stop', workers: 2 });
       yield app.ready();
-      app.close();
       yield sleep(10000);
       const log = getLogContent('stop');
       console.log(log);
@@ -184,10 +172,9 @@ describe('test/schedule.test.js', () => {
 
   describe('dynamic schedule', () => {
     it('should support dynamic disable', function* () {
-      const app = mm.cluster({ baseDir: 'dynamic', workers: 2 });
+      app = mm.cluster({ baseDir: 'dynamic', workers: 2 });
       yield app.ready();
       yield sleep(5000);
-      app.close();
       const log = getLogContent('dynamic');
       console.log(log);
       assert(contains(log, 'interval') === 0);
@@ -195,24 +182,22 @@ describe('test/schedule.test.js', () => {
     });
 
     it('should support run disabled dynamic schedule', function* () {
-      const app = mm.app({ baseDir: 'dynamic', cache: false });
+      app = mm.app({ baseDir: 'dynamic', cache: false });
       yield app.ready();
       yield app.runSchedule('interval');
 
       const log = getLogContent('dynamic');
       console.log(log);
       assert(contains(log, 'interval') === 1);
-      app.close();
     });
   });
 
 
   describe('export schedules', () => {
     it('should export app.schedules', function* () {
-      const app = mm.app({ baseDir: 'worker' });
+      app = mm.app({ baseDir: 'worker' });
       yield app.ready();
       assert(app.schedules);
-      app.close();
     });
   });
 

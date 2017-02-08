@@ -1,4 +1,11 @@
 
+2.3.0 / 2017-02-08
+==================
+
+  * feat: task support async function (#13)
+  * test: move app.close to afterEach (#12)
+  * chore: upgrade deps and fix test (#11)
+
 2.2.1 / 2016-10-25
 ==================
 

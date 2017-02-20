@@ -6,6 +6,18 @@ const fs = require('fs');
 require('should');
 
 describe('test/schedule.test.js', () => {
+  describe('schedule loader', () => {
+    it('should load extension', function* () {
+      const app = mm.cluster({ baseDir: 'loader', workers: 2 });
+      yield app.ready();
+      app.close();
+      const log = getLogContent('loader');
+      console.log(log);
+      contains(log, 'jsfile').should.equal(1);
+      contains(log, 'tsfile').should.equal(0);
+      contains(log, 'dotfile').should.equal(0);
+    });
+  });
   describe('schedule type worker', () => {
     it('should support interval and cron', function* () {
       const app = mm.cluster({ baseDir: 'worker', workers: 2 });

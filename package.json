@@ -23,17 +23,17 @@
   ],
   "dependencies": {
     "co": "^4.6.0",
-    "cron-parser": "^2.3.0",
+    "cron-parser": "^2.3.1",
     "humanize-ms": "^1.2.0",
     "is-type-of": "^1.0.0"
   },
   "devDependencies": {
     "autod": "^2.7.1",
-    "egg": "^0.9.0",
-    "egg-bin": "^2.0.2",
-    "egg-ci": "^1.1.0",
-    "egg-mock": "^2.3.1",
-    "eslint": "^3.14.1",
+    "egg": "^1.0.0-rc.2",
+    "egg-bin": "^2.2.3",
+    "egg-ci": "^1.5.0",
+    "egg-mock": "^3.1.1",
+    "eslint": "^3.17.0",
     "eslint-config-egg": "^3.2.0",
     "supertest": "^3.0.0"
   },
@@ -49,7 +49,9 @@
     "autod": "autod"
   },
   "ci": {
-    "version": "6, 7"
+    "version": "6, 7",
+    "license": true
   },
-  "author": "dead_horse"
+  "author": "dead_horse",
+  "license": "MIT"
 }

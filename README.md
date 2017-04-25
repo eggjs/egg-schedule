@@ -35,7 +35,7 @@ $ npm i egg-schedule --save
 ```javascript
 // {app_root}/config/plugin.js
 exports.schedule = {
-  package: 'egg-schedule'
+  package: 'egg-schedule',
 };
 
 // {app_root}/app/schedule/cleandb.js
@@ -127,7 +127,7 @@ Example:
 // To execute task every 3 hours
 exports.schedule = {
   type: 'worker',
-  cron: '0 0 */3 * * *'
+  cron: '0 0 */3 * * *',
 };
 ```
 
@@ -141,7 +141,7 @@ Example:
 // To execute task every 3 hours
 exports.schedule = {
   type: 'worker',
-  interval: '3h'
+  interval: '3h',
 };
 ```
 
@@ -169,7 +169,7 @@ module.exports = agent => {
 
 // {app_root}/app/schedule/other.js
 exports.schedule = {
-  type: 'custom'
+  type: 'custom',
 };
 ```
 

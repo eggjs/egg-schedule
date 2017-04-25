@@ -5,7 +5,6 @@ const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
 
-
 describe('test/schedule.test.js', () => {
   let app;
   afterEach(() => app.close());
@@ -214,7 +213,6 @@ describe('test/schedule.test.js', () => {
       assert(app.schedules);
     });
   });
-
 });
 
 function sleep(time) {

@@ -13,7 +13,6 @@ describe('test/schedule.test.js', () => {
     it('should support interval and cron', function* () {
       app = mm.cluster({ baseDir: 'worker', workers: 2 });
       yield app.ready();
-      console.log('app ready now !!!!!');
       yield sleep(5000);
       const log = getLogContent('worker');
       console.log(log);
@@ -29,7 +28,7 @@ describe('test/schedule.test.js', () => {
       console.log(log);
       assert(/method: SCHEDULE/.test(log));
       assert(/path: \/__schedule/.test(log));
-      assert(/(.*?)sub\/cron\.js/.test(log));
+      assert(/(.*?)sub(\/|\\)cron\.js/.test(log));
       assert(/"type":"worker"/.test(log));
       assert(/"cron":"\*\/5 \* \* \* \* \*"/.test(log));
       assert(/hello busi/.test(log));
@@ -43,7 +42,7 @@ describe('test/schedule.test.js', () => {
       console.log(log);
       assert(/method: SCHEDULE/.test(log));
       assert(/path: \/__schedule/.test(log));
-      assert(/(.*?)sub\/cron\.js/.test(log));
+      assert(/(.*?)sub(\/|\\)cron\.js/.test(log));
       assert(/"type":"worker"/.test(log));
       assert(/"cron":"\*\/5 \* \* \* \* \*"/.test(log));
       assert(/hello busi/.test(log));
@@ -52,7 +51,6 @@ describe('test/schedule.test.js', () => {
     it('should support immediate', function* () {
       app = mm.cluster({ baseDir: 'immediate', workers: 2 });
       yield app.ready();
-      console.log('app ready now !!!!!');
       yield sleep(5000);
       const log = getLogContent('immediate');
       console.log(log);

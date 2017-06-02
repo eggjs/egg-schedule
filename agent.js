@@ -3,6 +3,7 @@
 const loadSchedule = require('./lib/load_schedule');
 const parser = require('cron-parser');
 const ms = require('humanize-ms');
+const safetimers = require('safe-timers');
 
 const SCHEDULE_HANDLER = Symbol.for('egg#scheduleHandler');
 
@@ -72,7 +73,7 @@ function baseHander(schedule, send) {
 
   if (schedule.interval) {
     const interval = ms(schedule.interval);
-    setInterval(send, interval);
+    safetimers.setInterval(send, interval);
   }
 
   if (schedule.cron) {
@@ -98,7 +99,7 @@ function startCron(interval, listener) {
     nextTick = interval.next().getTime();
   } while (now >= nextTick);
 
-  setTimeout(() => {
+  safetimers.setTimeout(() => {
     listener();
     startCron(interval, listener);
   }, nextTick - now);

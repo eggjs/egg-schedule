@@ -1,4 +1,11 @@
 
+2.3.1 / 2017-06-04
+==================
+
+  * docs: fix License url (#20)
+  * test: fix test on windows (#18)
+  * chore: upgrade all deps (#17)
+
 2.3.0 / 2017-02-08
 ==================
 

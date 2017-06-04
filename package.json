@@ -1,6 +1,6 @@
 {
   "name": "egg-schedule",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "schedule plugin for egg, support corn job.",
   "eggPlugin": {
     "name": "schedule"

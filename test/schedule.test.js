@@ -11,7 +11,7 @@ describe('test/schedule.test.js', () => {
 
   describe('schedule type worker', () => {
     it('should support interval and cron', function* () {
-      app = mm.cluster({ baseDir: 'worker', workers: 2 });
+      app = mm.cluster({ baseDir: 'worker', workers: 2, cache: false });
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('worker');
@@ -54,8 +54,8 @@ describe('test/schedule.test.js', () => {
       yield sleep(5000);
       const log = getLogContent('immediate');
       console.log(log);
-      assert(contains(log, 'immediate-interval') === 2);
-      assert(contains(log, 'immediate-cron') === 2);
+      assert(contains(log, 'immediate-interval') >= 2);
+      assert(contains(log, 'immediate-cron') >= 2);
     });
   });
 
@@ -203,12 +203,29 @@ describe('test/schedule.test.js', () => {
     });
   });
 
-
   describe('export schedules', () => {
     it('should export app.schedules', function* () {
-      app = mm.app({ baseDir: 'worker' });
+      app = mm.app({ baseDir: 'worker', cache: false });
       yield app.ready();
       assert(app.schedules);
+    });
+  });
+
+  describe('safe-timers', () => {
+    it('should support interval and cron', function* () {
+      app = mm.cluster({ baseDir: 'safe-timers', workers: 2, cache: false });
+      yield app.ready();
+      yield sleep(5000);
+
+      const log = getLogContent('safe-timers');
+      console.log(log);
+      assert(contains(log, 'interval') === 1);
+      assert(contains(log, 'cron') === 1);
+
+      const agentLog = getAgentLogContent('safe-timers');
+      console.log(agentLog);
+      assert(contains(agentLog, 'reschedule 4321') === 2);
+      assert(contains(agentLog, 'reschedule') >= 4);
     });
   });
 });
@@ -226,6 +243,11 @@ function getLogContent(name) {
 
 function getErrorLogContent(name) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'common-error.log');
+  return fs.readFileSync(logPath, 'utf8');
+}
+
+function getAgentLogContent(name) {
+  const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'egg-agent.log');
   return fs.readFileSync(logPath, 'utf8');
 }
 

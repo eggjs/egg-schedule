@@ -1,4 +1,9 @@
 
+2.4.1 / 2017-06-06
+==================
+
+  * fix: use safe-timers only large than interval && add tests (#21)
+
 2.4.0 / 2017-06-05
 ==================
 

@@ -4,7 +4,6 @@ const loadSchedule = require('./lib/load_schedule');
 const parser = require('cron-parser');
 const ms = require('humanize-ms');
 const safetimers = require('safe-timers');
-const MAX_SAFE_TIME = Math.pow(2, 31) - 1;
 const SCHEDULE_HANDLER = Symbol.for('egg#scheduleHandler');
 
 module.exports = agent => {
@@ -106,7 +105,7 @@ function startCron(interval, listener) {
 }
 
 function safeTimeout(fn, delay, ...args) {
-  if (delay >= MAX_SAFE_TIME) {
+  if (delay < safetimers.maxInterval) {
     setTimeout(fn, delay, ...args);
   } else {
     safetimers.setTimeout(fn, delay, ...args);
@@ -114,7 +113,7 @@ function safeTimeout(fn, delay, ...args) {
 }
 
 function safeInterval(fn, delay, ...args) {
-  if (delay >= MAX_SAFE_TIME) {
+  if (delay < safetimers.maxInterval) {
     setInterval(fn, delay, ...args);
   } else {
     safetimers.setInterval(fn, delay, ...args);

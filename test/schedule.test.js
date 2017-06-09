@@ -137,6 +137,7 @@ describe('test/schedule.test.js', () => {
       yield app.ready();
       try {
         yield app.runSchedule(__filename);
+        yield sleep(1000);
         throw new Error('should not excute');
       } catch (err) {
         assert(err.message.includes('Cannot find schedule'));
@@ -147,6 +148,7 @@ describe('test/schedule.test.js', () => {
       app = mm.app({ baseDir: 'worker', cache: false });
       yield app.ready();
       yield app.runSchedule('sub/cron');
+      yield sleep(1000);
       const log = getLogContent('worker');
       console.log(log);
       assert(contains(log, 'cron') === 1);
@@ -157,6 +159,7 @@ describe('test/schedule.test.js', () => {
       yield app.ready();
       const schedulePath = path.join(__dirname, 'fixtures/worker/app/schedule/sub/cron.js');
       yield app.runSchedule(schedulePath);
+      yield sleep(1000);
       const log = getLogContent('worker');
       console.log(log);
       assert(contains(log, 'cron') === 1);
@@ -186,6 +189,7 @@ describe('test/schedule.test.js', () => {
       app = mm.cluster({ baseDir: 'dynamic', workers: 2 });
       yield app.ready();
       yield sleep(5000);
+
       const log = getLogContent('dynamic');
       console.log(log);
       assert(contains(log, 'interval') === 0);
@@ -195,8 +199,9 @@ describe('test/schedule.test.js', () => {
     it('should support run disabled dynamic schedule', function* () {
       app = mm.app({ baseDir: 'dynamic', cache: false });
       yield app.ready();
-      yield app.runSchedule('interval');
 
+      yield app.runSchedule('interval');
+      yield sleep(1000);
       const log = getLogContent('dynamic');
       console.log(log);
       assert(contains(log, 'interval') === 1);

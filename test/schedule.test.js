@@ -94,8 +94,6 @@ describe('test/schedule.test.js', () => {
       // console.log(log);
       assert(contains(log, 'custom_log') === 1);
       assert(contains(log, 'cluster_log') === 1);
-      assert(contains(log, 'should not log this') === 0);
-      assert(/schedule type \[error\] start is not implemented yet/.test(errorLog));
     });
   });
 

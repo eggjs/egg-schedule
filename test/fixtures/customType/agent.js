@@ -21,6 +21,4 @@ module.exports = function(agent) {
     }
   }
   agent.schedule.use('cluster', ClusterStrategy);
-
-  agent.schedule.use('error', class ErrorStrategy extends agent.ScheduleStrategy {});
 };

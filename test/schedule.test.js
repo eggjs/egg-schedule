@@ -118,6 +118,7 @@ describe('test/schedule.test.js', () => {
   describe('schedule cron instruction invalid', () => {
     it('should thrown', function* () {
       app = mm.cluster({ baseDir: 'cronError', workers: 2 });
+      // app.debug();
       yield app.ready();
       yield sleep(1000);
       assert(/parse cron instruction\(invalid instruction\) error/.test(getErrorLogContent('cronError')));

@@ -1,44 +1,43 @@
 'use strict';
 
 const SCHEDULE_HANDLER = Symbol.for('egg#scheduleHandler');
+const WorkerStrategy = require('./lib/strategy/worker');
+const AllStrategy = require('./lib/strategy/all');
+const BaseStrategy = require('./lib/strategy/base');
+const Schedule = require('./lib/schedule');
 
 module.exports = agent => {
-  const Schedule = require('./lib/schedule');
-  const schedule = new Schedule(agent);
-
   const handlers = agent[SCHEDULE_HANDLER] = {};
+  agent.schedule = new Schedule(agent);
+  agent.ScheduleStrategy = BaseStrategy;
+
+  agent.beforeClose(() => {
+    return agent.schedule.close();
+  });
 
   agent.messenger.once('egg-ready', () => {
-    // Compatible
-    for (const type of Object.keys(handlers)) {
-      schedule.use(type, handler2Class(type, handlers[type]));
+    agent.schedule.use('worker', WorkerStrategy);
+    agent.schedule.use('all', AllStrategy);
+    //TODO: compatible, will remove at next major
+    const keys = Object.keys(handlers);
+    if (keys.length) agent.deprecate('should use `schedule.use()` instead of `agent[Symbol.for(\'egg#scheduleHandler\')]` to register handler.');
+    for (const type of keys) {
+      agent.schedule.use(type, handler2Class(type, handlers[type]));
     }
-    schedule.start();
+    agent.schedule.start();
   });
 
   function handler2Class(type, fn) {
-    return class CustomStrategy extends Schedule.Strategy {
+    return class CustomStrategy extends BaseStrategy {
       constructor(...args) {
         super(...args);
         this.type = type;
       }
       start() {
-        fn(this.scheduleInfo, {
-          one: function() {
-            this.agent.coreLogger.info(`[egg-schedule] send message to random worker: ${this.key}`);
-            this.agent.messenger.sendRandom(this.key);
-          }.bind(this),
-
-          all: function() {
-            this.agent.coreLogger.info(`[egg-schedule] send message to all worker: ${this.key}`);
-            this.agent.messenger.send(this.key);
-          }.bind(this),
+        fn(this.schedule, {
+          one: this.sendOne.bind(this),
+          all: this.sendAll.bind(this),
         });
-      }
-      stop() {
-        const err = new Error(`schedule type [${this.type}] is implement stop handler`);
-        err.name = 'EggScheduleError';
-        throw err;
       }
     };
   }

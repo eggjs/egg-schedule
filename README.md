@@ -72,13 +72,10 @@ The rule of thumbs is one job per file.
 
 ## Task
 
-Task is a generator function, and accept one parameter, `ctx`. The syntax is, `exports.task = function* (ctx) { ... };`
-
-When the scheduled task runs, the scheduled job information will be logged and written to a local file in a folder called `/logs`. The log file contains many useful information, for example,
+Task is a generator/async function, and accept one parameter `ctx` which is an anonymous context with:
 
 - ctx.method: `SCHEDULE`
-- ctx.path: `/__schedule/${schedulePath}`. example path: `/__schedule?path=/FULL_PATH_TO/cleandb.js&type=worker&interval=3h`
-- ctx.query: `scheule config(type=worker&cron=*%2F5%20*%20*%20*%20*%20*)`
+- ctx.path: `/__schedule?path=${schedulePath}&${schedule}`.
 
 
 To create a task, it is as simple as write a generator / async function. For example:

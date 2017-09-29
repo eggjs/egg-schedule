@@ -33,35 +33,44 @@ module.exports = app => {
     return schedule.task(ctx);
   };
 
+  // log schedule list
   for (const s in schedules) {
     const schedule = schedules[s];
-    if (schedule.schedule.disable) continue;
-
-    const task = schedule.task;
-    const key = schedule.key;
-    app.coreLogger.info('[egg-schedule]: register schedule %s', key);
-    app.messenger.on(key, () => {
-      app.coreLogger.info('[egg-schedule]: get message %s', key);
-
-      // run with anonymous context
-      const ctx = app.createAnonymousContext({
-        method: 'SCHEDULE',
-        url: `/__schedule?path=${s}&${qs.stringify(schedule.schedule)}`,
-      });
-
-      const start = Date.now();
-      task(ctx)
-        .then(() => true) // succeed
-        .catch(err => {
-          err.message = `[egg-schedule] ${key} excute error. ${err.message}`;
-          app.logger.error(err);
-          return false; // failed
-        })
-        .then(success => {
-          const rt = Date.now() - start;
-          const status = success ? 'succeed' : 'failed';
-          app.coreLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
-        });
-    });
+    if (!schedule.schedule.disable) app.coreLogger.info('[egg-schedule]: register schedule %s', schedule.key);
   }
+
+  // register schedule event
+  app.messenger.on('egg-schedule', data => {
+    app.coreLogger.info('[egg-schedule]: get message: %j', data);
+    const key = data.key;
+    const schedule = schedules[key];
+
+    if (!schedule) {
+      app.coreLogger.warn(`[egg-schedule] unknown task: ${key}`);
+      return;
+    }
+    /* istanbul ignore next */
+    if (schedule.schedule.disable) return;
+
+    // run with anonymous context
+    const ctx = app.createAnonymousContext({
+      method: 'SCHEDULE',
+      url: `/__schedule?path=${key}&${qs.stringify(schedule.schedule)}`,
+    });
+
+    const start = Date.now();
+    const task = schedule.task;
+    task(ctx)
+      .then(() => true) // succeed
+      .catch(err => {
+        err.message = `[egg-schedule] ${key} excute error. ${err.message}`;
+        app.logger.error(err);
+        return false; // failed
+      })
+      .then(success => {
+        const rt = Date.now() - start;
+        const status = success ? 'succeed' : 'failed';
+        app.coreLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
+      });
+  });
 };

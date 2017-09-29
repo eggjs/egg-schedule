@@ -19,11 +19,12 @@ module.exports = agent => {
   });
 
   agent.messenger.once('egg-ready', () => {
+    // wait for other plugin to register custom strategy
     const keys = Object.keys(handlers);
     for (const type of keys) {
       agent.schedule.use(type, handler2Class(type, handlers[type]));
     }
-    // start schedule
+    // start schedule after worker ready
     agent.schedule.start();
   });
 

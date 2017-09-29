@@ -12,6 +12,7 @@ describe('test/schedule.test.js', () => {
   describe('schedule type worker', () => {
     it('should support interval and cron', function* () {
       app = mm.cluster({ baseDir: 'worker', workers: 2, cache: false });
+      // app.debug();
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('worker');
@@ -28,8 +29,7 @@ describe('test/schedule.test.js', () => {
       const log = getLogContent('cronOptions');
       const agentLog = getAgentLogContent('cronOptions');
       // console.log(log);
-      const count = contains(log, 'cron-options');
-      assert(count >= 1 && count <= 2);
+      assert(contains(log, 'cron-options') >= 1);
       assert(/cron-options.js reach endDate, will stop/.test(agentLog));
     });
 
@@ -105,8 +105,17 @@ describe('test/schedule.test.js', () => {
       yield sleep(5000);
       const log = getLogContent('customType');
       // console.log(log);
-      assert(contains(log, 'custom_log') === 1);
       assert(contains(log, 'cluster_log') === 1);
+    });
+
+    it('should support old way', function* () {
+      app = mm.cluster({ baseDir: 'customTypeOld', workers: 2 });
+      // app.debug();
+      yield app.ready();
+      yield sleep(5000);
+      const log = getLogContent('customTypeOld');
+      // console.log(log);
+      assert(contains(log, 'custom_log') === 1);
     });
   });
 
@@ -135,6 +144,16 @@ describe('test/schedule.test.js', () => {
       yield app.ready();
       yield sleep(1000);
       assert(/parse cron instruction\(invalid instruction\) error/.test(getErrorLogContent('cronError')));
+    });
+  });
+
+  describe('schedule unknown task', () => {
+    it('should skip', function* () {
+      app = mm.cluster({ baseDir: 'unknown', workers: 2 });
+      // app.debug();
+      yield app.ready();
+      yield sleep(3000);
+      assert(getWebLogContent('unknown').match(/\[egg-schedule] unknown task: no-exist/));
     });
   });
 
@@ -260,6 +279,11 @@ function sleep(time) {
 
 function getLogContent(name) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, `${name}-web.log`);
+  return fs.readFileSync(logPath, 'utf8');
+}
+
+function getWebLogContent(name) {
+  const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'egg-web.log');
   return fs.readFileSync(logPath, 'utf8');
 }
 

@@ -29,14 +29,12 @@ module.exports = agent => {
 
   function handler2Class(type, fn) {
     return class CustomStrategy extends agent.ScheduleStrategy {
-      start() {
+      constructor(...args) {
+        super(...args);
         fn(this.schedule, {
           one: this.sendOne.bind(this),
           all: this.sendAll.bind(this),
         });
-      }
-      close() {
-        this.agent.logger.warn(`schedule type [${type}] stop is not implemented yet`);
       }
     };
   }

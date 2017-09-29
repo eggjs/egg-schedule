@@ -20,6 +20,20 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cron') === 1);
     });
 
+    it('should support cronOptions', function* () {
+      app = mm.cluster({ baseDir: 'cronOptions', workers: 2 });
+      // app.debug();
+      yield app.ready();
+      yield sleep(8000);
+      const log = getLogContent('cronOptions');
+      const agentLog = getAgentLogContent('cronOptions');
+      // console.log(log);
+      const count = contains(log, 'cron-options');
+      assert(count >= 1 && count <= 2);
+      assert(/cron-options.js reach endDate, will stop/.test(agentLog));
+    });
+
+
     it('should support context', function* () {
       app = mm.cluster({ baseDir: 'context', workers: 2 });
       yield app.ready();

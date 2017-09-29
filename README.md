@@ -42,8 +42,9 @@ exports.schedule = {
 /**
 * @property {Object} schedule
 *  - {String} type - schedule type, `worker` or `all`
-*  - {String} [cron] - cron expression, [see below](#cron-style-scheduling)
-*  - {String | Number} [interval] - interval expression in millisecond or express explicitly like '1h'. [see below](#interval-style-scheduling)
+*  - {String} [cron] - cron expression, see [below](#cron-style-scheduling)
+*  - {Object} [cronOptions] - cron options, see [cron-parser#options](https://github.com/harrisiirak/cron-parser#options)
+*  - {String | Number} [interval] - interval expression in millisecond or express explicitly like '1h'. see [below](#interval-style-scheduling)
 *  - {Boolean} [immediate] - To run a scheduler at startup
 *  - {Boolean} [disable] - whether to disable a scheduler, usually use in dynamic schedule
 */
@@ -80,7 +81,7 @@ When the scheduled task runs, the scheduled job information will be logged and w
 - ctx.query: `scheule config(type=worker&cron=*%2F5%20*%20*%20*%20*%20*)`
 
 
-To create a task, it is as simple as write a generator function. For example:
+To create a task, it is as simple as write a generator / async function. For example:
 
 ```js
 // A simple logger example
@@ -92,14 +93,14 @@ exports.task = function* (ctx) {
 ```js
 // A real world example: wipe out your database.
 // Use it with caution. :)
-exports.task = function* (ctx) {
-  yield ctx.service.db.cleandb();
+exports.task = async function(ctx) {
+  await ctx.service.db.cleandb();
 };
 ```
 
 ## Scheduling
 
-`schedule` is an object that contains one required property, `type`, four optional properties, `{ cron, interval, immediate, disable }`.
+`schedule` is an object that contains one required property, `type`, and optional properties, `{ cron, cronOptions, interval, immediate, disable }`.
 
 ### Cron-style Scheduling
 
@@ -128,6 +129,9 @@ Example:
 exports.schedule = {
   type: 'worker',
   cron: '0 0 */3 * * *',
+  cronOptions: {
+    // tz: 'Europe/Athens',
+  }
 };
 ```
 
@@ -161,23 +165,18 @@ You can schedule the task to be executed by one random worker or all workers wit
 // {app_root}/agent.js
 module.exports = function(agent) {
   class CustomStrategy extends agent.ScheduleStrategy {
-    start() {
+    constructor(...args) {
+      super(...args);
       this.interval = setInterval(() => {
         this.sendOne();
       }, this.schedule.interval);
-    }
-    close() {
-      if (this.interval) {
-        this.clear(this.interval);
-        this.interval = undefined;
-      }
     }
   }
   agent.schedule.use('custsom', CustomStrategy);
 };
 ```
 
-Then you could use defined your job:
+Then you could use it to defined your job:
 
 ```js
 // {app_root}/app/schedule/other.js

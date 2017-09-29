@@ -8,16 +8,11 @@ module.exports = function(agent) {
   };
 
   class ClusterStrategy extends agent.ScheduleStrategy {
-    start() {
+    constructor(...args) {
+      super(...args);
       this.interval = setInterval(() => {
         this.sendOne();
       }, this.schedule.interval);
-    }
-    close() {
-      if (this.interval) {
-        this.clear(this.interval);
-        this.interval = undefined;
-      }
     }
   }
   agent.schedule.use('cluster', ClusterStrategy);

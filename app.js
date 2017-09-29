@@ -51,17 +51,17 @@ module.exports = app => {
 
       const start = Date.now();
       task(ctx)
-      .then(() => true) // succeed
-      .catch(err => {
-        err.message = `[egg-schedule] ${key} excute error. ${err.message}`;
-        app.logger.error(err);
-        return false;   // failed
-      })
-      .then(success => {
-        const rt = Date.now() - start;
-        const status = success ? 'succeed' : 'failed';
-        app.coreLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
-      });
+        .then(() => true) // succeed
+        .catch(err => {
+          err.message = `[egg-schedule] ${key} excute error. ${err.message}`;
+          app.logger.error(err);
+          return false; // failed
+        })
+        .then(success => {
+          const rt = Date.now() - start;
+          const status = success ? 'succeed' : 'failed';
+          app.coreLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
+        });
     });
   }
 };

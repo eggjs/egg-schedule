@@ -90,7 +90,6 @@ describe('test/schedule.test.js', () => {
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('customType');
-      const errorLog = getErrorLogContent('customType');
       // console.log(log);
       assert(contains(log, 'custom_log') === 1);
       assert(contains(log, 'cluster_log') === 1);

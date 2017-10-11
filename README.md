@@ -22,22 +22,13 @@
 
 A schedule plugin for egg. It supports two scheduler types, `worker` and `all`, and can be extended by other plugins.
 
-## Installation
-
-```bash
-$ npm i egg-schedule --save
-```
+`egg-schedule` has been built-in for egg. It is enabled by default.
 
 ## Usage
 
-`egg-schedule` is a plugin that has been built-in for egg. It is enabled by default.
+Just add you job file to `{app_root}/app/schedule`.
 
 ```js
-// {app_root}/config/plugin.js
-exports.schedule = {
-  package: 'egg-schedule',
-};
-
 // {app_root}/app/schedule/cleandb.js
 /**
 * @property {Object} schedule

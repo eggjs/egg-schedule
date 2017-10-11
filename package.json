@@ -6,8 +6,9 @@
     "name": "schedule"
   },
   "files": [
-    "agent.js",
+    "app",
     "lib",
+    "agent.js",
     "app.js"
   ],
   "repository": {
@@ -45,7 +46,7 @@
     "test": "npm run lint -- --fix && npm run pkgfiles && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
-    "ci": "npm run lint && npm run pkgfiles --check && npm run cov",
+    "ci": "npm run lint && npm run pkgfiles -- --check && npm run cov",
     "autod": "autod",
     "pkgfiles": "egg-bin pkgfiles"
   },

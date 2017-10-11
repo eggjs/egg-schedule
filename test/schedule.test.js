@@ -12,20 +12,34 @@ describe('test/schedule.test.js', () => {
   describe('schedule type worker', () => {
     it('should support interval and cron', function* () {
       app = mm.cluster({ baseDir: 'worker', workers: 2, cache: false });
+      // app.debug();
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('worker');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'interval') === 1);
       assert(contains(log, 'cron') === 1);
     });
+
+    it('should support cronOptions', function* () {
+      app = mm.cluster({ baseDir: 'cronOptions', workers: 2 });
+      // app.debug();
+      yield app.ready();
+      yield sleep(8000);
+      const log = getLogContent('cronOptions');
+      const agentLog = getAgentLogContent('cronOptions');
+      // console.log(log);
+      assert(contains(log, 'cron-options') >= 1);
+      assert(/cron-options.js reach endDate, will stop/.test(agentLog));
+    });
+
 
     it('should support context', function* () {
       app = mm.cluster({ baseDir: 'context', workers: 2 });
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('context');
-      console.log(log);
+      // console.log(log);
       assert(/method: SCHEDULE/.test(log));
       assert(/path: \/__schedule/.test(log));
       assert(/(.*?)sub(\/|\\)cron\.js/.test(log));
@@ -39,7 +53,7 @@ describe('test/schedule.test.js', () => {
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('async');
-      console.log(log);
+      // console.log(log);
       assert(/method: SCHEDULE/.test(log));
       assert(/path: \/__schedule/.test(log));
       assert(/(.*?)sub(\/|\\)cron\.js/.test(log));
@@ -53,7 +67,7 @@ describe('test/schedule.test.js', () => {
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('immediate');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'immediate-interval') >= 2);
       assert(contains(log, 'immediate-cron') >= 2);
     });
@@ -65,7 +79,7 @@ describe('test/schedule.test.js', () => {
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('all');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'interval') === 2);
       assert(contains(log, 'cron') === 2);
     });
@@ -77,20 +91,31 @@ describe('test/schedule.test.js', () => {
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('plugin');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'interval') === 1);
       assert(contains(log, 'cron') === 1);
     });
   });
 
   describe('custom schedule type', () => {
-    it('should set agent[SCHEDULE_HANDLER] work', function* () {
+    it('should work', function* () {
       app = mm.cluster({ baseDir: 'customType', workers: 2 });
+      // app.debug();
       yield app.ready();
       yield sleep(5000);
       const log = getLogContent('customType');
-      console.log(log);
-      assert(contains(log, 'custom') === 1);
+      // console.log(log);
+      assert(contains(log, 'cluster_log') === 1);
+    });
+
+    it('should support old way', function* () {
+      app = mm.cluster({ baseDir: 'customTypeOld', workers: 2 });
+      // app.debug();
+      yield app.ready();
+      yield sleep(5000);
+      const log = getLogContent('customTypeOld');
+      // console.log(log);
+      assert(contains(log, 'custom_log') === 1);
     });
   });
 
@@ -115,9 +140,20 @@ describe('test/schedule.test.js', () => {
   describe('schedule cron instruction invalid', () => {
     it('should thrown', function* () {
       app = mm.cluster({ baseDir: 'cronError', workers: 2 });
+      // app.debug();
       yield app.ready();
       yield sleep(1000);
       assert(/parse cron instruction\(invalid instruction\) error/.test(getErrorLogContent('cronError')));
+    });
+  });
+
+  describe('schedule unknown task', () => {
+    it('should skip', function* () {
+      app = mm.cluster({ baseDir: 'unknown', workers: 2 });
+      // app.debug();
+      yield app.ready();
+      yield sleep(3000);
+      assert(getWebLogContent('unknown').match(/\[egg-schedule] unknown task: no-exist/));
     });
   });
 
@@ -150,7 +186,7 @@ describe('test/schedule.test.js', () => {
       yield app.runSchedule('sub/cron');
       yield sleep(1000);
       const log = getLogContent('worker');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'cron') === 1);
     });
 
@@ -161,14 +197,14 @@ describe('test/schedule.test.js', () => {
       yield app.runSchedule(schedulePath);
       yield sleep(1000);
       const log = getLogContent('worker');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'cron') === 1);
     });
 
     it('should run schedule by absolute package path success', function* () {
       app = mm.app({ baseDir: 'worker', cache: false });
       yield app.ready();
-      console.log(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
+      // console.log(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
       yield app.runSchedule(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
     });
   });
@@ -179,7 +215,7 @@ describe('test/schedule.test.js', () => {
       yield app.ready();
       yield sleep(10000);
       const log = getLogContent('stop');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'interval') === 0);
     });
   });
@@ -191,7 +227,7 @@ describe('test/schedule.test.js', () => {
       yield sleep(5000);
 
       const log = getLogContent('dynamic');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'interval') === 0);
       assert(contains(log, 'cron') === 1);
     });
@@ -203,7 +239,7 @@ describe('test/schedule.test.js', () => {
       yield app.runSchedule('interval');
       yield sleep(1000);
       const log = getLogContent('dynamic');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'interval') === 1);
     });
   });
@@ -223,12 +259,12 @@ describe('test/schedule.test.js', () => {
       yield sleep(5000);
 
       const log = getLogContent('safe-timers');
-      console.log(log);
+      // console.log(log);
       assert(contains(log, 'interval') === 1);
       assert(contains(log, 'cron') === 1);
 
       const agentLog = getAgentLogContent('safe-timers');
-      console.log(agentLog);
+      // console.log(agentLog);
       assert(contains(agentLog, 'reschedule 4321') === 2);
       assert(contains(agentLog, 'reschedule') >= 4);
     });
@@ -243,6 +279,11 @@ function sleep(time) {
 
 function getLogContent(name) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, `${name}-web.log`);
+  return fs.readFileSync(logPath, 'utf8');
+}
+
+function getWebLogContent(name) {
+  const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'egg-web.log');
   return fs.readFileSync(logPath, 'utf8');
 }
 

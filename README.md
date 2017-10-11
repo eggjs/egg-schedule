@@ -32,7 +32,7 @@ $ npm i egg-schedule --save
 
 `egg-schedule` is a plugin that has been built-in for egg. It is enabled by default.
 
-```javascript
+```js
 // {app_root}/config/plugin.js
 exports.schedule = {
   package: 'egg-schedule',
@@ -42,8 +42,9 @@ exports.schedule = {
 /**
 * @property {Object} schedule
 *  - {String} type - schedule type, `worker` or `all`
-*  - {String} [cron] - cron expression, [see below](#cron-style-scheduling)
-*  - {String | Number} [interval] - interval expression in millisecond or express explicitly like '1h'. [see below](#interval-style-scheduling)
+*  - {String} [cron] - cron expression, see [below](#cron-style-scheduling)
+*  - {Object} [cronOptions] - cron options, see [cron-parser#options](https://github.com/harrisiirak/cron-parser#options)
+*  - {String | Number} [interval] - interval expression in millisecond or express explicitly like '1h'. see [below](#interval-style-scheduling)
 *  - {Boolean} [immediate] - To run a scheduler at startup
 *  - {Boolean} [disable] - whether to disable a scheduler, usually use in dynamic schedule
 */
@@ -71,35 +72,32 @@ The rule of thumbs is one job per file.
 
 ## Task
 
-Task is a generator function, and accept one parameter, `ctx`. The syntax is, `exports.task = function* (ctx) { ... };`
-
-When the scheduled task runs, the scheduled job information will be logged and written to a local file in a folder called `/logs`. The log file contains many useful information, for example,
+Task is a generator/async function, and accept one parameter `ctx` which is an anonymous context with:
 
 - ctx.method: `SCHEDULE`
-- ctx.path: `/__schedule/${schedulePath}`. example path: `/__schedule?path=/FULL_PATH_TO/cleandb.js&type=worker&interval=3h`
-- ctx.query: `scheule config(type=worker&cron=*%2F5%20*%20*%20*%20*%20*)`
+- ctx.path: `/__schedule?path=${schedulePath}&${schedule}`.
 
 
-To create a task, it is as simple as write a generator function. For example:
+To create a task, it is as simple as write a generator / async function. For example:
 
-```javascript
+```js
 // A simple logger example
 exports.task = function* (ctx) {
   ctx.logger.info('Info about your task');
 };
 ```
 
-```javascript
+```js
 // A real world example: wipe out your database.
 // Use it with caution. :)
-exports.task = function* (ctx) {
-  yield ctx.service.db.cleandb();
+exports.task = async function(ctx) {
+  await ctx.service.db.cleandb();
 };
 ```
 
 ## Scheduling
 
-`schedule` is an object that contains one required property, `type`, four optional properties, `{ cron, interval, immediate, disable }`.
+`schedule` is an object that contains one required property, `type`, and optional properties, `{ cron, cronOptions, interval, immediate, disable }`.
 
 ### Cron-style Scheduling
 
@@ -123,11 +121,14 @@ Use [cron-parser](https://github.com/harrisiirak/cron-parser).
 
 Example:
 
-```javascript
+```js
 // To execute task every 3 hours
 exports.schedule = {
   type: 'worker',
   cron: '0 0 */3 * * *',
+  cronOptions: {
+    // tz: 'Europe/Athens',
+  }
 };
 ```
 
@@ -137,7 +138,7 @@ To use `setInterval`, and support [ms](https://www.npmjs.com/package/ms) convers
 
 Example:
 
-```javascript
+```js
 // To execute task every 3 hours
 exports.schedule = {
   type: 'worker',
@@ -154,28 +155,38 @@ exports.schedule = {
 
 **Custom schedule**
 
-To create a custom schedule, simply create a schedule with a type `custom` and its corresponding method. Inside your custom method, you can schedule the task to be executed by one random worker or all workers with the built-in method `sender.one()` or `sender.all()`.
+To create a custom schedule, simply extend `agent.ScheduleStrategy` and register it by `agent.schedule.use(type, clz)`.
+You can schedule the task to be executed by one random worker or all workers with the built-in method `this.sendOne()` or `this.sendAll()`.
 
-```javascript
+```js
 // {app_root}/agent.js
-const SCHEDULE_HANDLER = Symbol.for('egg#scheduleHandler');
-
-module.exports = agent => {
-  // sender.one() - will notify one random worker to execute task
-  // sender.all() - will notify all workers
-  agent[SCHEDULE_HANDLER].custom = (schedule, sender) =>
-    setInterval(sender.one, schedule.interval);
+module.exports = function(agent) {
+  class CustomStrategy extends agent.ScheduleStrategy {
+    constructor(...args) {
+      super(...args);
+      this.interval = setInterval(() => {
+        this.sendOne();
+      }, this.schedule.interval);
+    }
+  }
+  agent.schedule.use('custsom', CustomStrategy);
 };
+```
 
+Then you could use it to defined your job:
+
+```js
 // {app_root}/app/schedule/other.js
 exports.schedule = {
   type: 'custom',
 };
+
+exports.task = function* (ctx) {};
 ```
 
 ## Dynamic schedule
 
-```javascript
+```js
 // {app_root}/app/schedule/sync.js
 module.exports = app => {
   exports.schedule = {
@@ -199,7 +210,7 @@ module.exports = app => {
 
 Example:
 
-```javascript
+```js
 it('test a schedule task', function* () {
   // get app instance
   yield app.runSchedule('clean_cache');

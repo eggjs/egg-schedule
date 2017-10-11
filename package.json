@@ -1,6 +1,6 @@
 {
   "name": "egg-schedule",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "schedule plugin for egg, support corn job.",
   "eggPlugin": {
     "name": "schedule"
@@ -43,12 +43,11 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint -- --fix && npm run pkgfiles && npm run test-local",
+    "test": "npm run lint -- --fix && egg-bin pkgfiles && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
-    "ci": "npm run lint && npm run pkgfiles -- --check && npm run cov",
-    "autod": "autod",
-    "pkgfiles": "egg-bin pkgfiles"
+    "ci": "npm run lint && egg-bin pkgfiles --check && npm run cov",
+    "autod": "autod"
   },
   "ci": {
     "version": "6, 8",

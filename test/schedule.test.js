@@ -269,6 +269,19 @@ describe('test/schedule.test.js', () => {
       assert(contains(agentLog, 'reschedule') >= 4);
     });
   });
+
+  describe('Subscription', () => {
+    it('should support interval and cron', function* () {
+      app = mm.cluster({ baseDir: 'worker', workers: 2, cache: false });
+      // app.debug();
+      yield app.ready();
+      yield sleep(5000);
+      const log = getLogContent('worker');
+      // console.log(log);
+      assert(contains(log, 'interval') === 1);
+      assert(contains(log, 'cron') === 1);
+    });
+  });
 });
 
 function sleep(time) {

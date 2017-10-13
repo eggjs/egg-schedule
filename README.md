@@ -30,15 +30,38 @@ Just add you job file to `{app_root}/app/schedule`.
 
 ```js
 // {app_root}/app/schedule/cleandb.js
-/**
-* @property {Object} schedule
-*  - {String} type - schedule type, `worker` or `all`
-*  - {String} [cron] - cron expression, see [below](#cron-style-scheduling)
-*  - {Object} [cronOptions] - cron options, see [cron-parser#options](https://github.com/harrisiirak/cron-parser#options)
-*  - {String | Number} [interval] - interval expression in millisecond or express explicitly like '1h'. see [below](#interval-style-scheduling)
-*  - {Boolean} [immediate] - To run a scheduler at startup
-*  - {Boolean} [disable] - whether to disable a scheduler, usually use in dynamic schedule
-*/
+const Subscription = require('egg').Subscription;
+
+class CleanDB extends Subscription {
+  /**
+   * @property {Object} schedule
+   *  - {String} type - schedule type, `worker` or `all`
+   *  - {String} [cron] - cron expression, see [below](#cron-style-scheduling)
+   *  - {Object} [cronOptions] - cron options, see [cron-parser#options](https://github.com/harrisiirak/cron-parser#options)
+   *  - {String | Number} [interval] - interval expression in millisecond or express explicitly like '1h'. see [below](#interval-style-scheduling)
+   *  - {Boolean} [immediate] - To run a scheduler at startup
+   *  - {Boolean} [disable] - whether to disable a scheduler, usually use in dynamic schedule
+   */
+  static get schedule() {
+    return {
+      type: 'worker',
+      cron: '0 0 3 * * *',
+      // interval: '1h',
+      // immediate: true,
+    };
+  }
+
+  * subscribe() {
+    yield this.ctx.service.db.cleandb();
+  }
+}
+
+module.exports = CleanDB;
+```
+
+You can also use function simply.
+
+```js
 exports.schedule = {
   type: 'worker',
   cron: '0 0 3 * * *',
@@ -73,17 +96,21 @@ To create a task, it is as simple as write a generator / async function. For exa
 
 ```js
 // A simple logger example
-exports.task = function* (ctx) {
-  ctx.logger.info('Info about your task');
-};
+class LoggerExample extends Subscription {
+  * subscribe() {
+    this.ctx.logger.info('Info about your task');
+  }
+}
 ```
 
 ```js
 // A real world example: wipe out your database.
 // Use it with caution. :)
-exports.task = async function(ctx) {
-  await ctx.service.db.cleandb();
-};
+class CleanDB extends Subscription {
+  async subscribe() {
+    await this.ctx.service.db.cleandb();
+  }
+}
 ```
 
 ## Scheduling
@@ -215,4 +242,3 @@ Please open an issue [here](https://github.com/eggjs/egg/issues).
 ## License
 
 [MIT](https://github.com/eggjs/egg-schedule/blob/master/LICENSE)
-

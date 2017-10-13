@@ -30,6 +30,7 @@ module.exports = app => {
       method: 'SCHEDULE',
       url: `/__schedule?path=${schedulePath}&${qs.stringify(schedule.schedule)}`,
     });
+
     return schedule.task(ctx);
   };
 

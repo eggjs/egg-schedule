@@ -4,8 +4,10 @@ const Subscription = require('egg').BaseContextClass;
 
 class Interval extends Subscription {
   static get schedule() {
-    type: 'worker',
-    interval: 4000,
+    return {
+      type: 'worker',
+      interval: 4000,
+    };
   }
 
   * subscribe() {

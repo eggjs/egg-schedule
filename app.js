@@ -3,7 +3,6 @@
 const loadSchedule = require('./lib/load_schedule');
 const qs = require('querystring');
 const path = require('path');
-const is = require('is-type-of');
 
 module.exports = app => {
   const schedules = loadSchedule(app);
@@ -32,10 +31,7 @@ module.exports = app => {
       url: `/__schedule?path=${schedulePath}&${qs.stringify(schedule.schedule)}`,
     });
 
-    if (!is.class(schedule)) return schedule.task(ctx);
-
-    const s = new schedule(ctx);
-    return s.subscribe();
+    return schedule.task(ctx);
   };
 
   // log schedule list

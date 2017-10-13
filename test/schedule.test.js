@@ -272,11 +272,11 @@ describe('test/schedule.test.js', () => {
 
   describe('Subscription', () => {
     it('should support interval and cron', function* () {
-      app = mm.cluster({ baseDir: 'worker', workers: 2, cache: false });
+      app = mm.cluster({ baseDir: 'subscription', workers: 2, cache: false });
       // app.debug();
       yield app.ready();
       yield sleep(5000);
-      const log = getLogContent('worker');
+      const log = getLogContent('subscription');
       // console.log(log);
       assert(contains(log, 'interval') === 1);
       assert(contains(log, 'cron') === 1);

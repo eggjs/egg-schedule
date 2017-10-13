@@ -18,20 +18,23 @@ module.exports = agent => {
     },
   });
 
-  agent.messenger.once('egg-ready', () => {
+  agent.beforeStart(() => {
     // wait for other plugin to register custom strategy
     const keys = Object.keys(handlers);
     for (const type of keys) {
       agent.schedule.use(type, handler2Class(type, handlers[type]));
     }
+    agent.schedule.init();
+  });
+
+  agent.messenger.once('egg-ready', () => {
     // start schedule after worker ready
     agent.schedule.start();
   });
 
   function handler2Class(type, fn) {
     return class CustomStrategy extends agent.ScheduleStrategy {
-      constructor(...args) {
-        super(...args);
+      start() {
         fn(this.schedule, {
           one: this.sendOne.bind(this),
           all: this.sendAll.bind(this),

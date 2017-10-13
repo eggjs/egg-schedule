@@ -2,7 +2,8 @@
 
 module.exports = function(agent) {
   class ClusterStrategy extends agent.ScheduleStrategy {
-    start() {
+    constructor(...args) {
+      super(...args);
       this.interval = setInterval(() => {
         this.sendOne();
       }, this.schedule.interval);

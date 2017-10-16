@@ -1,4 +1,14 @@
 
+2.6.0 / 2017-10-16
+==================
+
+**features**
+  * [[`f901df4`](http://github.com/eggjs/egg-schedule/commit/f901df4e895d440c9d3bc96e172d3cc87be95255)] - feat: Strategy interface change to start() (#26) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`c7816f2`](http://github.com/eggjs/egg-schedule/commit/c7816f2eb8ca668c92c1671b1d149c78dd73551e)] - feat: support class (#25) (Haoliang Gao <<sakura9515@gmail.com>>)
+
+**others**
+  * [[`8797489`](http://github.com/eggjs/egg-schedule/commit/8797489f914a34bf56ecc68575b0b7e490628b5a)] - docs: use subscription (#27) (Haoliang Gao <<sakura9515@gmail.com>>)
+
 2.5.1 / 2017-10-11
 ==================
 

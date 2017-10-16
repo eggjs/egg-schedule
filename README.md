@@ -86,13 +86,15 @@ The rule of thumbs is one job per file.
 
 ## Task
 
-Task is a generator/async function, and accept one parameter `ctx` which is an anonymous context with:
+Task is a class which will be instantiated every schedule, and `subscribe` method will be invoked.
+
+You can get anonymous context with `this.ctx`.
 
 - ctx.method: `SCHEDULE`
 - ctx.path: `/__schedule?path=${schedulePath}&${schedule}`.
 
 
-To create a task, it is as simple as write a generator / async function. For example:
+To create a task, `subscribe` can be generator function or async function. For example:
 
 ```js
 // A simple logger example

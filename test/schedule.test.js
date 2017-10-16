@@ -108,6 +108,35 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cluster_log') === 1);
     });
 
+    it('should work at plugin', function* () {
+      app = mm.cluster({ baseDir: 'customTypePlugin', workers: 2 });
+      // app.debug();
+      yield app.ready();
+      yield sleep(5000);
+      const log = getLogContent('customTypePlugin');
+      // console.log(log);
+      assert(contains(log, 'cluster_log') === 1);
+    });
+
+    it('should work without start', function* () {
+      app = mm.cluster({ baseDir: 'customTypeWithoutStart', workers: 2 });
+      // app.debug();
+      yield app.ready();
+      yield sleep(5000);
+      const log = getLogContent('customTypeWithoutStart');
+      // console.log(log);
+      assert(contains(log, 'cluster_log') === 1);
+    });
+
+    it('should handler error', function* () {
+      app = mm.cluster({ baseDir: 'customTypeError', workers: 2 });
+      // app.debug();
+      yield app.ready();
+      yield sleep(1000);
+      app.expect('code', 1);
+      app.expect('stderr', /should provide clusterId/);
+    });
+
     it('should support old way', function* () {
       app = mm.cluster({ baseDir: 'customTypeOld', workers: 2 });
       // app.debug();
@@ -133,7 +162,7 @@ describe('test/schedule.test.js', () => {
       app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
       yield app.ready();
       yield sleep(1000);
-      assert(/schedule type \[undefined\] is not defined/.test(getErrorLogContent('typeUndefined')));
+      app.expect('stderr', /schedule type \[undefined\] is not defined/);
     });
   });
 

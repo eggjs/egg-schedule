@@ -182,8 +182,7 @@ You can schedule the task to be executed by one random worker or all workers wit
 // {app_root}/agent.js
 module.exports = function(agent) {
   class CustomStrategy extends agent.ScheduleStrategy {
-    constructor(...args) {
-      super(...args);
+    start() {
       this.interval = setInterval(() => {
         this.sendOne();
       }, this.schedule.interval);

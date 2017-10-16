@@ -162,7 +162,7 @@ describe('test/schedule.test.js', () => {
       app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
       yield app.ready();
       yield sleep(1000);
-      assert(/schedule type \[undefined\] is not defined/.test(getErrorLogContent('typeUndefined')));
+      app.expect('stderr', /schedule type \[undefined\] is not defined/);
     });
   });
 

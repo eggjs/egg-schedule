@@ -1,6 +1,6 @@
 'use strict';
 
-const Subscription = require('egg').BaseContextClass;
+const Subscription = require('egg').Subscription;
 
 class Interval extends Subscription {
   static get schedule() {

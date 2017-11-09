@@ -150,16 +150,6 @@ describe('test/schedule.test.js', () => {
       app.expect('code', 1);
       app.expect('stderr', /should provide clusterId/);
     });
-
-    it('should support old way', async () => {
-      app = mm.cluster({ baseDir: 'customTypeOld', workers: 2 });
-      // app.debug();
-      await app.ready();
-      await sleep(5000);
-      const log = getLogContent('customTypeOld');
-      // console.log(log);
-      assert(contains(log, 'custom_log') === 1);
-    });
   });
 
   describe('schedule config error', () => {

@@ -98,6 +98,7 @@ To create a task, `subscribe` can be generator function or async function. For e
 
 ```js
 // A simple logger example
+const Subscription = require('egg').Subscription;
 class LoggerExample extends Subscription {
   * subscribe() {
     this.ctx.logger.info('Info about your task');
@@ -108,6 +109,7 @@ class LoggerExample extends Subscription {
 ```js
 // A real world example: wipe out your database.
 // Use it with caution. :)
+const Subscription = require('egg').Subscription;
 class CleanDB extends Subscription {
   async subscribe() {
     await this.ctx.service.db.cleandb();
@@ -196,11 +198,17 @@ Then you could use it to defined your job:
 
 ```js
 // {app_root}/app/schedule/other.js
-exports.schedule = {
-  type: 'custom',
-};
-
-exports.task = async function (ctx) {};
+const Subscription = require('egg').Subscription;
+class ClusterTask extends Subscription {
+  static get schedule() {
+    return {
+      type: 'custom',
+    };
+  }
+  async subscribe() {
+    await this.ctx.service.someTask.run();
+  }
+}
 ```
 
 ## Dynamic schedule
@@ -208,19 +216,21 @@ exports.task = async function (ctx) {};
 ```js
 // {app_root}/app/schedule/sync.js
 module.exports = app => {
-  exports.schedule = {
-    interval: 10000,
-    type: 'worker',
-    // only start task when hostname match
-    disable: require('os').hostname() !== app.config.sync.hostname
-  };
-
-  exports.task = async function (ctx) {
-    await ctx.sync();
-  };
-
-  return exports;
-};
+  class SyncTask extends app.Subscription {
+    static get schedule() {
+      return {
+        interval: 10000,
+        type: 'worker',
+        // only start task when hostname match
+        disable: require('os').hostname() !== app.config.sync.hostname
+      };
+    }
+    async subscribe() {
+      await ctx.sync();
+    }
+  }
+  return SyncTask;
+}
 ```
 
 ## Testing

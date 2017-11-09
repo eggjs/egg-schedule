@@ -51,8 +51,8 @@ class CleanDB extends Subscription {
     };
   }
 
-  * subscribe() {
-    yield this.ctx.service.db.cleandb();
+  async subscribe() {
+    await this.ctx.service.db.cleandb();
   }
 }
 
@@ -69,8 +69,8 @@ exports.schedule = {
   // immediate: true,
 };
 
-exports.task = function* (ctx) {
-  yield ctx.service.db.cleandb();
+exports.task = async function (ctx) {
+  await ctx.service.db.cleandb();
 };
 ```
 
@@ -200,7 +200,7 @@ exports.schedule = {
   type: 'custom',
 };
 
-exports.task = function* (ctx) {};
+exports.task = async function (ctx) {};
 ```
 
 ## Dynamic schedule
@@ -215,8 +215,8 @@ module.exports = app => {
     disable: require('os').hostname() !== app.config.sync.hostname
   };
 
-  exports.task = function* (ctx) {
-    yield ctx.sync();
+  exports.task = async function (ctx) {
+    await ctx.sync();
   };
 
   return exports;
@@ -230,9 +230,9 @@ module.exports = app => {
 Example:
 
 ```js
-it('test a schedule task', function* () {
+it('test a schedule task', async function () {
   // get app instance
-  yield app.runSchedule('clean_cache');
+  await app.runSchedule('clean_cache');
 });
 ```
 

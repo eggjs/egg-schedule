@@ -5,6 +5,6 @@ exports.schedule = {
   interval: 4000,
 };
 
-exports.task = function* (ctx) {
+exports.task = async function (ctx) {
   ctx.logger.info('cluster_log');
 };

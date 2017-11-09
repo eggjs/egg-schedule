@@ -10,22 +10,22 @@ describe('test/schedule.test.js', () => {
   afterEach(() => app.close());
 
   describe('schedule type worker', () => {
-    it('should support interval and cron', function* () {
+    it('should support interval and cron', async () => {
       app = mm.cluster({ baseDir: 'worker', workers: 2, cache: false });
       // app.debug();
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('worker');
       // console.log(log);
       assert(contains(log, 'interval') === 1);
       assert(contains(log, 'cron') === 1);
     });
 
-    it('should support cronOptions', function* () {
+    it('should support cronOptions', async () => {
       app = mm.cluster({ baseDir: 'cronOptions', workers: 2 });
       // app.debug();
-      yield app.ready();
-      yield sleep(8000);
+      await app.ready();
+      await sleep(8000);
       const log = getLogContent('cronOptions');
       const agentLog = getAgentLogContent('cronOptions');
       // console.log(log);
@@ -34,10 +34,10 @@ describe('test/schedule.test.js', () => {
     });
 
 
-    it('should support context', function* () {
+    it('should support context', async () => {
       app = mm.cluster({ baseDir: 'context', workers: 2 });
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('context');
       // console.log(log);
       assert(/method: SCHEDULE/.test(log));
@@ -48,10 +48,10 @@ describe('test/schedule.test.js', () => {
       assert(/hello busi/.test(log));
     });
 
-    it('should support async', function* () {
+    it('should support async', async () => {
       app = mm.cluster({ baseDir: 'async', workers: 2 });
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('async');
       // console.log(log);
       assert(/method: SCHEDULE/.test(log));
@@ -62,10 +62,10 @@ describe('test/schedule.test.js', () => {
       assert(/hello busi/.test(log));
     });
 
-    it('should support immediate', function* () {
+    it('should support immediate', async () => {
       app = mm.cluster({ baseDir: 'immediate', workers: 2 });
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('immediate');
       // console.log(log);
       assert(contains(log, 'immediate-interval') >= 2);
@@ -74,10 +74,10 @@ describe('test/schedule.test.js', () => {
   });
 
   describe('schedule type all', () => {
-    it('should support interval and cron', function* () {
+    it('should support interval and cron', async () => {
       app = mm.cluster({ baseDir: 'all', workers: 2 });
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('all');
       // console.log(log);
       assert(contains(log, 'interval') === 2);
@@ -86,10 +86,10 @@ describe('test/schedule.test.js', () => {
   });
 
   describe('schedule in plugin', () => {
-    it('should support interval and cron', function* () {
+    it('should support interval and cron', async () => {
       app = mm.cluster({ baseDir: 'plugin', workers: 2 });
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('plugin');
       // console.log(log);
       assert(contains(log, 'interval') === 1);
@@ -98,50 +98,50 @@ describe('test/schedule.test.js', () => {
   });
 
   describe('custom schedule type', () => {
-    it('should work', function* () {
+    it('should work', async () => {
       app = mm.cluster({ baseDir: 'customType', workers: 2 });
       // app.debug();
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('customType');
       // console.log(log);
       assert(contains(log, 'cluster_log') === 1);
     });
 
-    it('should work at plugin', function* () {
+    it('should work at plugin', async () => {
       app = mm.cluster({ baseDir: 'customTypePlugin', workers: 2 });
       // app.debug();
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('customTypePlugin');
       // console.log(log);
       assert(contains(log, 'cluster_log') === 1);
     });
 
-    it('should work without start', function* () {
+    it('should work without start', async () => {
       app = mm.cluster({ baseDir: 'customTypeWithoutStart', workers: 2 });
       // app.debug();
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('customTypeWithoutStart');
       // console.log(log);
       assert(contains(log, 'cluster_log') === 1);
     });
 
-    it('should handler error', function* () {
+    it('should handler error', async () => {
       app = mm.cluster({ baseDir: 'customTypeError', workers: 2 });
       // app.debug();
-      yield app.ready();
-      yield sleep(1000);
+      await app.ready();
+      await sleep(1000);
       app.expect('code', 1);
       app.expect('stderr', /should provide clusterId/);
     });
 
-    it('should support old way', function* () {
+    it('should support old way', async () => {
       app = mm.cluster({ baseDir: 'customTypeOld', workers: 2 });
       // app.debug();
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('customTypeOld');
       // console.log(log);
       assert(contains(log, 'custom_log') === 1);
@@ -149,100 +149,100 @@ describe('test/schedule.test.js', () => {
   });
 
   describe('schedule config error', () => {
-    it('should thrown', function* () {
+    it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'scheduleError', workers: 2 });
-      yield app.ready();
-      yield sleep(1000);
+      await app.ready();
+      await sleep(1000);
       assert(/\[egg-schedule\] schedule\.interval or schedule\.cron must be present/.test(getErrorLogContent('scheduleError')));
     });
   });
 
   describe('schedule type undefined', () => {
-    it('should thrown', function* () {
+    it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
-      yield app.ready();
-      yield sleep(1000);
+      await app.ready();
+      await sleep(1000);
       app.expect('stderr', /schedule type \[undefined\] is not defined/);
     });
   });
 
   describe('schedule cron instruction invalid', () => {
-    it('should thrown', function* () {
+    it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'cronError', workers: 2 });
       // app.debug();
-      yield app.ready();
-      yield sleep(1000);
+      await app.ready();
+      await sleep(1000);
       assert(/parse cron instruction\(invalid instruction\) error/.test(getErrorLogContent('cronError')));
     });
   });
 
   describe('schedule unknown task', () => {
-    it('should skip', function* () {
+    it('should skip', async () => {
       app = mm.cluster({ baseDir: 'unknown', workers: 2 });
       // app.debug();
-      yield app.ready();
-      yield sleep(3000);
+      await app.ready();
+      await sleep(3000);
       assert(getWebLogContent('unknown').match(/\[egg-schedule] unknown task: no-exist/));
     });
   });
 
   describe('schedule excute error', () => {
-    it('should thrown', function* () {
+    it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'excuteError', workers: 2 });
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const errorLog = getErrorLogContent('excuteError');
       assert(contains(errorLog, 'excute error') === 2);
     });
   });
 
   describe('app.runSchedule', () => {
-    it('should run schedule not exist throw error', function* () {
+    it('should run schedule not exist throw error', async () => {
       app = mm.app({ baseDir: 'worker', cache: false });
-      yield app.ready();
+      await app.ready();
       try {
-        yield app.runSchedule(__filename);
-        yield sleep(1000);
+        await app.runSchedule(__filename);
+        await sleep(1000);
         throw new Error('should not excute');
       } catch (err) {
         assert(err.message.includes('Cannot find schedule'));
       }
     });
 
-    it('should run schedule by relative path success', function* () {
+    it('should run schedule by relative path success', async () => {
       app = mm.app({ baseDir: 'worker', cache: false });
-      yield app.ready();
-      yield app.runSchedule('sub/cron');
-      yield sleep(1000);
+      await app.ready();
+      await app.runSchedule('sub/cron');
+      await sleep(1000);
       const log = getLogContent('worker');
       // console.log(log);
       assert(contains(log, 'cron') === 1);
     });
 
-    it('should run schedule by absolute path success', function* () {
+    it('should run schedule by absolute path success', async () => {
       app = mm.app({ baseDir: 'worker', cache: false });
-      yield app.ready();
+      await app.ready();
       const schedulePath = path.join(__dirname, 'fixtures/worker/app/schedule/sub/cron.js');
-      yield app.runSchedule(schedulePath);
-      yield sleep(1000);
+      await app.runSchedule(schedulePath);
+      await sleep(1000);
       const log = getLogContent('worker');
       // console.log(log);
       assert(contains(log, 'cron') === 1);
     });
 
-    it('should run schedule by absolute package path success', function* () {
+    it('should run schedule by absolute package path success', async () => {
       app = mm.app({ baseDir: 'worker', cache: false });
-      yield app.ready();
+      await app.ready();
       // console.log(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
-      yield app.runSchedule(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
+      await app.runSchedule(require.resolve('egg/node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
     });
   });
 
   describe('stop schedule', () => {
-    it('should stop schedule after app closed', function* () {
+    it('should stop schedule after app closed', async () => {
       app = mm.cluster({ baseDir: 'stop', workers: 2 });
-      yield app.ready();
-      yield sleep(10000);
+      await app.ready();
+      await sleep(10000);
       const log = getLogContent('stop');
       // console.log(log);
       assert(contains(log, 'interval') === 0);
@@ -250,10 +250,10 @@ describe('test/schedule.test.js', () => {
   });
 
   describe('dynamic schedule', () => {
-    it('should support dynamic disable', function* () {
+    it('should support dynamic disable', async () => {
       app = mm.cluster({ baseDir: 'dynamic', workers: 2 });
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
 
       const log = getLogContent('dynamic');
       // console.log(log);
@@ -261,12 +261,12 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cron') === 1);
     });
 
-    it('should support run disabled dynamic schedule', function* () {
+    it('should support run disabled dynamic schedule', async () => {
       app = mm.app({ baseDir: 'dynamic', cache: false });
-      yield app.ready();
+      await app.ready();
 
-      yield app.runSchedule('interval');
-      yield sleep(1000);
+      await app.runSchedule('interval');
+      await sleep(1000);
       const log = getLogContent('dynamic');
       // console.log(log);
       assert(contains(log, 'interval') === 1);
@@ -274,18 +274,18 @@ describe('test/schedule.test.js', () => {
   });
 
   describe('export schedules', () => {
-    it('should export app.schedules', function* () {
+    it('should export app.schedules', async () => {
       app = mm.app({ baseDir: 'worker', cache: false });
-      yield app.ready();
+      await app.ready();
       assert(app.schedules);
     });
   });
 
   describe('safe-timers', () => {
-    it('should support interval and cron', function* () {
+    it('should support interval and cron', async () => {
       app = mm.cluster({ baseDir: 'safe-timers', workers: 2, cache: false });
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
 
       const log = getLogContent('safe-timers');
       // console.log(log);
@@ -300,11 +300,11 @@ describe('test/schedule.test.js', () => {
   });
 
   describe('Subscription', () => {
-    it('should support interval and cron', function* () {
+    it('should support interval and cron', async () => {
       app = mm.cluster({ baseDir: 'subscription', workers: 2, cache: false });
       // app.debug();
-      yield app.ready();
-      yield sleep(5000);
+      await app.ready();
+      await sleep(5000);
       const log = getLogContent('subscription');
       // console.log(log);
       assert(contains(log, 'interval') === 1);

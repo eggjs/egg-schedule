@@ -5,6 +5,6 @@ exports.schedule = {
   cron: '*/5 * * * * *',
 };
 
-exports.task = function* (ctx) {
+exports.task = async function (ctx) {
   ctx.logger.info('cron');
 };

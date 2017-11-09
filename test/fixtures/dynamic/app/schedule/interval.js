@@ -7,7 +7,7 @@ module.exports = function(app) {
     disable: app.config.disable,
   };
 
-  exports.task = function* (ctx) {
+  exports.task = async function (ctx) {
     ctx.logger.info('interval');
   };
 

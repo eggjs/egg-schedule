@@ -2,7 +2,7 @@
 
 module.exports = app => {
   return class UserService extends app.Service {
-    * hello(name) {
+    async hello(name) {
       return `hello ${name}`;
     }
   };

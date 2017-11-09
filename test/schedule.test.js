@@ -62,6 +62,20 @@ describe('test/schedule.test.js', () => {
       assert(/hello busi/.test(log));
     });
 
+    it('should support generator', async () => {
+      app = mm.cluster({ baseDir: 'generator', workers: 2 });
+      await app.ready();
+      await sleep(5000);
+      const log = getLogContent('generator');
+      // console.log(log);
+      assert(/method: SCHEDULE/.test(log));
+      assert(/path: \/__schedule/.test(log));
+      assert(/(.*?)sub(\/|\\)cron\.js/.test(log));
+      assert(/"type":"worker"/.test(log));
+      assert(/"cron":"\*\/5 \* \* \* \* \*"/.test(log));
+      assert(/hello busi/.test(log));
+    });
+
     it('should support immediate', async () => {
       app = mm.cluster({ baseDir: 'immediate', workers: 2 });
       await app.ready();

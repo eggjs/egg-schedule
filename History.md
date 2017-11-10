@@ -1,4 +1,11 @@
 
+3.0.0 / 2017-11-10
+==================
+
+**others**
+  * [[`925f1c3`](http://github.com/eggjs/egg-schedule/commit/925f1c38ffb5c8d73e91fe96e6e7fc30c3f43c5f)] - refactor: remove old stype strategy support [BREAKING CHANGE] (#29) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`4cdfa20`](http://github.com/eggjs/egg-schedule/commit/4cdfa204f1da36288328bf30acb0564da1e3d1b5)] - test: change to extend Subscription (#28) (TZ | 天猪 <<atian25@qq.com>>)
+
 2.6.0 / 2017-10-16
 ==================
 

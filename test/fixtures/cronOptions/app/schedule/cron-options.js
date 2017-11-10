@@ -8,6 +8,6 @@ exports.schedule = {
   }
 };
 
-exports.task = function* (ctx) {
+exports.task = async function (ctx) {
   ctx.logger.info('cron-options');
 };

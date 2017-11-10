@@ -3,7 +3,7 @@
 const Service = require('egg').Service;
 
 class UserService extends Service {
-  async hello(name) {
+  * hello(name) {
     return `hello ${name}`;
   }
 }

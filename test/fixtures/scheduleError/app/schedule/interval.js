@@ -4,6 +4,6 @@ exports.schedule = {
   type: 'worker',
 };
 
-exports.task = function* (ctx) {
+exports.task = async function (ctx) {
   ctx.logger.info('interval');
 };

@@ -1,6 +1,6 @@
 {
   "name": "egg-schedule",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "schedule plugin for egg, support corn job.",
   "eggPlugin": {
     "name": "schedule"
@@ -29,12 +29,12 @@
     "safe-timers": "^1.1.0"
   },
   "devDependencies": {
-    "autod": "^2.10.1",
+    "autod": "^3.0.1",
     "egg": "next",
     "egg-bin": "^4.3.5",
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.13.1",
-    "eslint": "^4.10.0",
+    "eslint": "^4.11.0",
     "eslint-config-egg": "^5.1.1"
   },
   "engines": {

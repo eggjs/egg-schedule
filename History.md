@@ -1,4 +1,10 @@
 
+3.1.0 / 2017-11-16
+==================
+
+**features**
+  * [[`69a588e`](https://github.com/eggjs/egg-schedule/commit/69a588e5ffbb5a01ed3084bfb9f6c2a792963db4)] - feat: run a scheduler only once at startup (#33) (zhennann <<zhen.nann@icloud.com>>)
+
 3.0.0 / 2017-11-10
 ==================
 

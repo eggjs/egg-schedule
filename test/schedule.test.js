@@ -85,6 +85,15 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'immediate-interval') >= 2);
       assert(contains(log, 'immediate-cron') >= 2);
     });
+
+    it('should support immediate-onlyonce', async () => {
+      app = mm.cluster({ baseDir: 'immediate-onlyonce', workers: 2 });
+      await app.ready();
+      await sleep(1000);
+      const log = getLogContent('immediate-onlyonce');
+      // console.log(log);
+      assert(contains(log, 'immediate-onlyonce') === 1);
+    });
   });
 
   describe('schedule type all', () => {
@@ -157,7 +166,7 @@ describe('test/schedule.test.js', () => {
       app = mm.cluster({ baseDir: 'scheduleError', workers: 2 });
       await app.ready();
       await sleep(1000);
-      assert(/\[egg-schedule\] schedule\.interval or schedule\.cron must be present/.test(getErrorLogContent('scheduleError')));
+      assert(/\[egg-schedule\] schedule\.interval or schedule\.cron or schedule\.immediate must be present/.test(getErrorLogContent('scheduleError')));
     });
   });
 

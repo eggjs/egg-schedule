@@ -71,7 +71,7 @@ module.exports = app => {
       .then(success => {
         const rt = Date.now() - start;
         const status = success ? 'succeed' : 'failed';
-        app.coreLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
+        ctx.coreLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
       });
   });
 };

@@ -1,4 +1,10 @@
 
+3.1.1 / 2017-11-20
+==================
+
+**fixes**
+  * [[`9ff3974`](http://github.com/eggjs/egg-schedule/commit/9ff3974683e1f4ade72ccbe2448a3c68d7826530)] - fix: use ctx.coreLogger to record schedule log (#34) (Yiyu He <<dead_horse@qq.com>>)
+
 3.1.0 / 2017-11-16
 ==================
 

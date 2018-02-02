@@ -178,7 +178,7 @@ exports.schedule = {
 **Custom schedule**
 
 To create a custom schedule, simply extend `agent.ScheduleStrategy` and register it by `agent.schedule.use(type, clz)`.
-You can schedule the task to be executed by one random worker or all workers with the built-in method `this.sendOne()` or `this.sendAll()`.
+You can schedule the task to be executed by one random worker or all workers with the built-in method `this.sendOne()` or `this.sendAll()` which support one params, it will pass to `subscribe(data)` and `task(ctx, data)`.
 
 ```js
 // {app_root}/agent.js
@@ -186,7 +186,8 @@ module.exports = function(agent) {
   class CustomStrategy extends agent.ScheduleStrategy {
     start() {
       this.interval = setInterval(() => {
-        this.sendOne();
+        const data = { foo: 'bar' };
+        this.sendOne(data);
       }, this.schedule.interval);
     }
   }
@@ -205,7 +206,8 @@ class ClusterTask extends Subscription {
       type: 'custom',
     };
   }
-  async subscribe() {
+  async subscribe(data) {
+    console.log('got custom data:', data);
     await this.ctx.service.someTask.run();
   }
 }

@@ -337,6 +337,23 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cron') === 1);
     });
   });
+
+  describe.only('send with params', () => {
+    describe('custom schedule type', () => {
+      it('should work', async () => {
+        app = mm.cluster({ baseDir: 'customTypeParams', workers: 2 });
+        // app.debug();
+        await app.ready();
+        await sleep(5000);
+        const log = getLogContent('customTypeParams');
+        // console.log(log);
+        assert(contains(log, 'cluster_log { foo: \'worker\' }') === 1);
+        assert(contains(log, 'cluster_all_log { foo: \'all\' }') === 2);
+        assert(contains(log, 'cluster_log_clz { foo: \'worker\' }') === 1);
+        assert(contains(log, 'cluster_all_log_clz { foo: \'all\' }') === 2);
+      });
+    });
+  });
 });
 
 function sleep(time) {

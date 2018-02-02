@@ -19,6 +19,12 @@ describe('test/schedule.test.js', () => {
       // console.log(log);
       assert(contains(log, 'interval') === 1);
       assert(contains(log, 'cron') === 1);
+
+      const scheduleLog = getScheduleLogContent('worker');
+      assert(contains(scheduleLog, 'cron.js trigger') === 1);
+      assert(contains(scheduleLog, 'cron.js excute succeed') === 1);
+      assert(contains(scheduleLog, 'interval.js trigger') === 1);
+      assert(contains(scheduleLog, 'interval.js excute succeed') === 1);
     });
 
     it('should support cronOptions', async () => {
@@ -32,7 +38,6 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cron-options') >= 1);
       assert(/cron-options.js reach endDate, will stop/.test(agentLog));
     });
-
 
     it('should support context', async () => {
       app = mm.cluster({ baseDir: 'context', workers: 2 });
@@ -105,6 +110,12 @@ describe('test/schedule.test.js', () => {
       // console.log(log);
       assert(contains(log, 'interval') === 2);
       assert(contains(log, 'cron') === 2);
+
+      const scheduleLog = getScheduleLogContent('all');
+      assert(contains(scheduleLog, 'cron.js trigger') === 1);
+      assert(contains(scheduleLog, 'cron.js excute succeed') === 2);
+      assert(contains(scheduleLog, 'interval.js trigger') === 1);
+      assert(contains(scheduleLog, 'interval.js excute succeed') === 2);
     });
   });
 
@@ -206,6 +217,8 @@ describe('test/schedule.test.js', () => {
       await sleep(5000);
       const errorLog = getErrorLogContent('excuteError');
       assert(contains(errorLog, 'excute error') === 2);
+      const scheduleLog = getScheduleLogContent('excuteError');
+      assert(contains(scheduleLog, 'excute error') === 2);
     });
   });
 
@@ -349,6 +362,11 @@ function getErrorLogContent(name) {
 
 function getAgentLogContent(name) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'egg-agent.log');
+  return fs.readFileSync(logPath, 'utf8');
+}
+
+function getScheduleLogContent(name) {
+  const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'egg-schedule.log');
   return fs.readFileSync(logPath, 'utf8');
 }
 

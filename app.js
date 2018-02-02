@@ -5,6 +5,9 @@ const qs = require('querystring');
 const path = require('path');
 
 module.exports = app => {
+  // don't redirect scheduleLogger
+  app.loggers.scheduleLogger.unredirect('error');
+
   const schedules = loadSchedule(app);
 
   // for test purpose
@@ -66,12 +69,14 @@ module.exports = app => {
       .catch(err => {
         err.message = `[egg-schedule] ${key} excute error. ${err.message}`;
         app.logger.error(err);
+        app.loggers.scheduleLogger.error(err);
         return false; // failed
       })
       .then(success => {
         const rt = Date.now() - start;
         const status = success ? 'succeed' : 'failed';
         ctx.coreLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
+        app.loggers.scheduleLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
       });
   });
 };

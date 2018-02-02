@@ -64,7 +64,7 @@ module.exports = app => {
 
     const start = Date.now();
     const task = schedule.task;
-    task(ctx, data.data)
+    task(ctx, ...data.args)
       .then(() => true) // succeed
       .catch(err => {
         err.message = `[egg-schedule] ${key} excute error. ${err.message}`;

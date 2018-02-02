@@ -338,7 +338,7 @@ describe('test/schedule.test.js', () => {
     });
   });
 
-  describe.only('send with params', () => {
+  describe('send with params', () => {
     describe('custom schedule type', () => {
       it('should work', async () => {
         app = mm.cluster({ baseDir: 'customTypeParams', workers: 2 });

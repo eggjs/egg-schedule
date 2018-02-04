@@ -22,9 +22,9 @@ describe('test/schedule.test.js', () => {
 
       const scheduleLog = getScheduleLogContent('worker');
       assert(contains(scheduleLog, 'cron.js trigger') === 1);
-      assert(contains(scheduleLog, 'cron.js excute succeed') === 1);
+      assert(contains(scheduleLog, 'cron.js execute succeed') === 1);
       assert(contains(scheduleLog, 'interval.js trigger') === 1);
-      assert(contains(scheduleLog, 'interval.js excute succeed') === 1);
+      assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
     });
 
     it('should support cronOptions', async () => {
@@ -113,9 +113,9 @@ describe('test/schedule.test.js', () => {
 
       const scheduleLog = getScheduleLogContent('all');
       assert(contains(scheduleLog, 'cron.js trigger') === 1);
-      assert(contains(scheduleLog, 'cron.js excute succeed') === 2);
+      assert(contains(scheduleLog, 'cron.js execute succeed') === 2);
       assert(contains(scheduleLog, 'interval.js trigger') === 1);
-      assert(contains(scheduleLog, 'interval.js excute succeed') === 2);
+      assert(contains(scheduleLog, 'interval.js execute succeed') === 2);
     });
   });
 
@@ -210,15 +210,15 @@ describe('test/schedule.test.js', () => {
     });
   });
 
-  describe('schedule excute error', () => {
+  describe('schedule execute error', () => {
     it('should thrown', async () => {
-      app = mm.cluster({ baseDir: 'excuteError', workers: 2 });
+      app = mm.cluster({ baseDir: 'executeError', workers: 2 });
       await app.ready();
       await sleep(5000);
-      const errorLog = getErrorLogContent('excuteError');
-      assert(contains(errorLog, 'excute error') === 2);
-      const scheduleLog = getScheduleLogContent('excuteError');
-      assert(contains(scheduleLog, 'excute error') === 2);
+      const errorLog = getErrorLogContent('executeError');
+      assert(contains(errorLog, 'execute error') === 2);
+      const scheduleLog = getScheduleLogContent('executeError');
+      assert(contains(scheduleLog, 'execute error') === 2);
     });
   });
 
@@ -229,7 +229,7 @@ describe('test/schedule.test.js', () => {
       try {
         await app.runSchedule(__filename);
         await sleep(1000);
-        throw new Error('should not excute');
+        throw new Error('should not execute');
       } catch (err) {
         assert(err.message.includes('Cannot find schedule'));
       }

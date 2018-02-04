@@ -67,7 +67,7 @@ module.exports = app => {
     task(ctx, ...data.args)
       .then(() => true) // succeed
       .catch(err => {
-        err.message = `[egg-schedule] ${key} excute error. ${err.message}`;
+        err.message = `[egg-schedule] ${key} execute error. ${err.message}`;
         app.logger.error(err);
         app.loggers.scheduleLogger.error(err);
         return false; // failed
@@ -75,8 +75,8 @@ module.exports = app => {
       .then(success => {
         const rt = Date.now() - start;
         const status = success ? 'succeed' : 'failed';
-        ctx.coreLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
-        app.loggers.scheduleLogger.info(`[egg-schedule] ${key} excute ${status}, used ${rt}ms`);
+        ctx.coreLogger.info(`[egg-schedule] ${key} execute ${status}, used ${rt}ms`);
+        app.loggers.scheduleLogger.info(`[egg-schedule] ${key} execute ${status}, used ${rt}ms`);
       });
   });
 };

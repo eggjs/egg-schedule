@@ -1,4 +1,10 @@
 
+3.2.0 / 2018-02-06
+==================
+
+**features**
+  * [[`2003369`](http://github.com/eggjs/egg-schedule/commit/200336963cdf2404b926fa1c36223c41229cf32d)] - feat: egg-schedule.log && support send with args (#35) (TZ | 天猪 <<atian25@qq.com>>)
+
 3.1.1 / 2017-11-20
 ==================
 

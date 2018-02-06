@@ -235,6 +235,10 @@ module.exports = app => {
 }
 ```
 
+## Logging
+
+See `${appInfo.root}/logs/egg-schedule.log` which provided by [config.customLogger.scheduleLogger](config/config.default.js).
+
 ## Testing
 
 `app.runSchedule(scheduleName)` is provided by `egg-schedule` plugin only for test purpose.

@@ -8,6 +8,7 @@
   "files": [
     "app",
     "lib",
+    "config",
     "agent.js",
     "app.js"
   ],
@@ -23,19 +24,20 @@
     "cron"
   ],
   "dependencies": {
-    "cron-parser": "^2.4.3",
+    "cron-parser": "^2.4.4",
     "humanize-ms": "^1.2.1",
     "is-type-of": "^1.2.0",
-    "safe-timers": "^1.1.0"
+    "safe-timers": "^1.1.0",
+    "utility": "^1.13.1"
   },
   "devDependencies": {
     "autod": "^3.0.1",
-    "egg": "next",
-    "egg-bin": "^4.3.5",
+    "egg": "^2.3.0",
+    "egg-bin": "^4.3.7",
     "egg-ci": "^1.8.0",
-    "egg-mock": "^3.13.1",
-    "eslint": "^4.11.0",
-    "eslint-config-egg": "^5.1.1"
+    "egg-mock": "^3.14.0",
+    "eslint": "^4.16.0",
+    "eslint-config-egg": "^6.0.0"
   },
   "engines": {
     "node": ">=8.0.0"

@@ -21,9 +21,9 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cron') === 1);
 
       const scheduleLog = getScheduleLogContent('worker');
-      assert(contains(scheduleLog, 'cron.js trigger') === 1);
+      assert(contains(scheduleLog, 'cron.js triggered') === 1);
       assert(contains(scheduleLog, 'cron.js execute succeed') === 1);
-      assert(contains(scheduleLog, 'interval.js trigger') === 1);
+      assert(contains(scheduleLog, 'interval.js triggered') === 1);
       assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
     });
 
@@ -112,9 +112,9 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cron') === 2);
 
       const scheduleLog = getScheduleLogContent('all');
-      assert(contains(scheduleLog, 'cron.js trigger') === 1);
+      assert(contains(scheduleLog, 'cron.js triggered') === 1);
       assert(contains(scheduleLog, 'cron.js execute succeed') === 2);
-      assert(contains(scheduleLog, 'interval.js trigger') === 1);
+      assert(contains(scheduleLog, 'interval.js triggered') === 1);
       assert(contains(scheduleLog, 'interval.js execute succeed') === 2);
     });
   });

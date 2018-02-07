@@ -237,7 +237,7 @@ module.exports = app => {
 
 ## Logging
 
-See `${appInfo.root}/logs/egg-schedule.log` which provided by [config.customLogger.scheduleLogger](config/config.default.js).
+See `${appInfo.root}/logs/egg-schedule.log` which provided by [config.customLogger.scheduleLogger](https://github.com/eggjs/egg-schedule/blob/master/config/config.default.js).
 
 ## Testing
 

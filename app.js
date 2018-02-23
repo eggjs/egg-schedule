@@ -40,17 +40,18 @@ module.exports = app => {
   // log schedule list
   for (const s in schedules) {
     const schedule = schedules[s];
-    if (!schedule.schedule.disable) app.coreLogger.info('[egg-schedule]: register schedule %s', schedule.key);
+    if (!schedule.schedule.disable) app.coreLogger.info('register schedule %s', schedule.key);
   }
 
   // register schedule event
   app.messenger.on('egg-schedule', data => {
-    app.coreLogger.info('[egg-schedule]: get message: %j', data);
     const key = data.key;
     const schedule = schedules[key];
+    const logger = app.loggers.scheduleLogger;
+    logger.info(`${key} task received, id: ${data.id}`);
 
     if (!schedule) {
-      app.coreLogger.warn(`[egg-schedule] unknown task: ${key}`);
+      logger.warn(`${key} unknown task`);
       return;
     }
     /* istanbul ignore next */
@@ -64,19 +65,21 @@ module.exports = app => {
 
     const start = Date.now();
     const task = schedule.task;
+    logger.info(`${key} start executing`);
+    // execute
     task(ctx, ...data.args)
       .then(() => true) // succeed
       .catch(err => {
+        logger.error(`${key} execute error.`, err);
         err.message = `[egg-schedule] ${key} execute error. ${err.message}`;
         app.logger.error(err);
-        app.loggers.scheduleLogger.error(err);
         return false; // failed
       })
       .then(success => {
         const rt = Date.now() - start;
         const status = success ? 'succeed' : 'failed';
         ctx.coreLogger.info(`[egg-schedule] ${key} execute ${status}, used ${rt}ms`);
-        app.loggers.scheduleLogger.info(`[egg-schedule] ${key} execute ${status}, used ${rt}ms`);
+        logger[success ? 'info' : 'error'](`${key} execute ${status}, used ${rt}ms`);
       });
   });
 };

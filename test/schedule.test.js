@@ -206,7 +206,7 @@ describe('test/schedule.test.js', () => {
       // app.debug();
       await app.ready();
       await sleep(3000);
-      assert(getWebLogContent('unknown').match(/\[egg-schedule] unknown task: no-exist/));
+      assert(getScheduleLogContent('unknown').match(/no-exist unknown task/));
     });
   });
 
@@ -364,11 +364,6 @@ function sleep(time) {
 
 function getLogContent(name) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, `${name}-web.log`);
-  return fs.readFileSync(logPath, 'utf8');
-}
-
-function getWebLogContent(name) {
-  const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'egg-web.log');
   return fs.readFileSync(logPath, 'utf8');
 }
 

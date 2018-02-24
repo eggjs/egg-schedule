@@ -52,7 +52,7 @@ module.exports = app => {
     logger.info(`[${id}] ${key} task received by app`);
 
     if (!schedule) {
-      logger.warn(`${key} unknown task`);
+      logger.warn(`[${id}] ${key} unknown task`);
       return;
     }
     /* istanbul ignore next */

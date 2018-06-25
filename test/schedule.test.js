@@ -354,12 +354,34 @@ describe('test/schedule.test.js', () => {
       });
     });
   });
+
+  describe('schedule.env', () => {
+    it('should support env list', async () => {
+      app = mm.cluster({ baseDir: 'env', workers: 1, cache: false });
+      app.debug();
+      await app.ready();
+      await sleep(5000);
+      const log = getCoreLogContent('env');
+      // console.log(log);
+      assert(log.match(/ignore schedule .*local\.js/));
+
+      const scheduleLog = getScheduleLogContent('env');
+      assert(contains(scheduleLog, 'undefined.js triggered') >= 1);
+      assert(contains(scheduleLog, 'unittest.js triggered') >= 1);
+      assert(contains(scheduleLog, 'local.js triggered') === 0);
+    });
+  });
 });
 
 function sleep(time) {
   return new Promise(resolve => {
     setTimeout(resolve, time);
   });
+}
+
+function getCoreLogContent(name) {
+  const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'egg-web.log');
+  return fs.readFileSync(logPath, 'utf8');
 }
 
 function getLogContent(name) {

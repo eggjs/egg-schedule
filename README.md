@@ -35,12 +35,13 @@ const Subscription = require('egg').Subscription;
 class CleanDB extends Subscription {
   /**
    * @property {Object} schedule
-   *  - {String} type - schedule type, `worker` or `all`
+   *  - {String} type - schedule type, `worker` or `all` or your custom types.
    *  - {String} [cron] - cron expression, see [below](#cron-style-scheduling)
    *  - {Object} [cronOptions] - cron options, see [cron-parser#options](https://github.com/harrisiirak/cron-parser#options)
    *  - {String | Number} [interval] - interval expression in millisecond or express explicitly like '1h'. see [below](#interval-style-scheduling)
    *  - {Boolean} [immediate] - To run a scheduler at startup
    *  - {Boolean} [disable] - whether to disable a scheduler, usually use in dynamic schedule
+   *  - {Array} [env] - only enable scheduler when match env list
    */
   static get schedule() {
     return {
@@ -100,7 +101,7 @@ To create a task, `subscribe` can be generator function or async function. For e
 // A simple logger example
 const Subscription = require('egg').Subscription;
 class LoggerExample extends Subscription {
-  * subscribe() {
+  async subscribe() {
     this.ctx.logger.info('Info about your task');
   }
 }
@@ -119,7 +120,7 @@ class CleanDB extends Subscription {
 
 ## Scheduling
 
-`schedule` is an object that contains one required property, `type`, and optional properties, `{ cron, cronOptions, interval, immediate, disable }`.
+`schedule` is an object that contains one required property, `type`, and optional properties, `{ cron, cronOptions, interval, immediate, disable, env }`.
 
 ### Cron-style Scheduling
 
@@ -224,10 +225,12 @@ module.exports = app => {
         interval: 10000,
         type: 'worker',
         // only start task when hostname match
-        disable: require('os').hostname() !== app.config.sync.hostname
+        disable: require('os').hostname() !== app.config.sync.hostname,
+        // only start task at prod mode
+        env: [ 'prod' ],
       };
     }
-    async subscribe() {
+    async subscribe(ctx) {
       await ctx.sync();
     }
   }

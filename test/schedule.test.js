@@ -357,8 +357,8 @@ describe('test/schedule.test.js', () => {
 
   describe('schedule.env', () => {
     it('should support env list', async () => {
-      app = mm.cluster({ baseDir: 'env', workers: 1, cache: false });
-      app.debug();
+      app = mm.cluster({ baseDir: 'env', workers: 2, cache: false });
+      // app.debug();
       await app.ready();
       await sleep(5000);
       const log = getCoreLogContent('env');

@@ -1,4 +1,10 @@
 
+3.4.0 / 2018-06-30
+==================
+
+**features**
+  * [[`417a764`](http://github.com/eggjs/egg-schedule/commit/417a7643807e56a432703e64f76923b60e1053ba)] - feat: support `schedule.env` (#39) (TZ | 天猪 <<atian25@qq.com>>)
+
 3.3.0 / 2018-02-24
 ==================
 

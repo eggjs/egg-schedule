@@ -187,7 +187,7 @@ module.exports = function(agent) {
   class CustomStrategy extends agent.ScheduleStrategy {
     start() {
       // such as mq / redis subscribe
-      agent.notify.subscribe('remote_task', data =>
+      agent.notify.subscribe('remote_task', data => {
         this.sendOne(data);
       });
     }

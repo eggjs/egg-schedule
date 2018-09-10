@@ -168,6 +168,7 @@ exports.schedule = {
   interval: '3h',
 };
 ```
+**Notice: Egg itself WON'T pay attention to an evil problem of `setInterval` (for details, please see:  https://www.thecodeship.com/web-development/alternative-to-javascript-evil-setinterval/ ). So you have to make sure that your actual execution time of your callback set in the `setInterval` must be smaller / equal to your delay time in that function.**
 
 ### Schedule Type
 

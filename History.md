@@ -1,4 +1,17 @@
 
+3.5.0 / 2018-12-05
+==================
+
+**features**
+  * [[`1aaf2d5`](http://github.com/eggjs/egg-schedule/commit/1aaf2d5675253d125eacca8bfd77813ecc151d2a)] - feat: support custom directory (#43) (Haoliang Gao <<sakura9515@gmail.com>>)
+
+**fixes**
+  * [[`4dbf9d9`](http://github.com/eggjs/egg-schedule/commit/4dbf9d9d3785b19eb772704c724c421e1017922a)] - fix: unit-test in 'schedule.test.js' (#41) (Maledong <<maledong_github@outlook.com>>)
+
+**others**
+  * [[`571bf9f`](http://github.com/eggjs/egg-schedule/commit/571bf9f28ed229f957fa70067786061a89dc1049)] - doc: Add notice for the evil 'setInterval' (#42) (Maledong <<maledong_github@outlook.com>>)
+  * [[`07e4e23`](http://github.com/eggjs/egg-schedule/commit/07e4e238f198fbf935ac5e7fff279f349e11a6b5)] - docs: fix example in readme (cwtuan <<cwtuan@users.noreply.github.com>>)
+
 3.4.0 / 2018-06-30
 ==================
 

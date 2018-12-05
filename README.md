@@ -239,7 +239,9 @@ module.exports = app => {
 }
 ```
 
-## Logging
+## Configuration
+
+### Logging
 
 See `${appInfo.root}/logs/{app_name}/egg-schedule.log` which provided by [config.customLogger.scheduleLogger](https://github.com/eggjs/egg-schedule/blob/master/config/config.default.js).
 
@@ -250,6 +252,19 @@ config.customLogger = {
     // consoleLevel: 'NONE',
     // file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
   },
+};
+```
+
+### Customize directory
+
+If you want to put schedule code in other directory, you can use this config.
+
+```js
+// config/config.default.js
+config.schedule = {
+  directory: [
+    path.join(__dirname, '../app/otherSchedule'),
+  ],
 };
 ```
 

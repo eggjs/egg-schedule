@@ -370,6 +370,25 @@ describe('test/schedule.test.js', () => {
       assert(contains(scheduleLog, 'local.js triggered') === 0);
     });
   });
+
+  describe('customize directory', () => {
+    it('should support env list', async () => {
+      app = mm.cluster({ baseDir: 'customDirectory', workers: 2, cache: false });
+      // app.debug();
+      await app.ready();
+      await sleep(5000);
+      const log = getLogContent('customDirectory');
+      // console.log(log);
+      assert(contains(log, ' interval') === 1);
+      assert(contains(log, ' customDirectory') === 1);
+
+      const scheduleLog = getScheduleLogContent('customDirectory');
+      assert(contains(scheduleLog, 'custom.js triggered') === 1);
+      assert(contains(scheduleLog, 'custom.js execute succeed') === 1);
+      assert(contains(scheduleLog, 'interval.js triggered') === 1);
+      assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
+    });
+  });
 });
 
 function sleep(time) {

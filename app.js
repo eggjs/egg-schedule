@@ -6,9 +6,68 @@ const path = require('path');
 
 module.exports = app => {
   // don't redirect scheduleLogger
-  app.loggers.scheduleLogger.unredirect('error');
+  const logger = app.loggers.scheduleLogger;
+  logger.unredirect('error');
 
   const schedules = loadSchedule(app);
+
+  // log schedule list
+  for (const s in schedules) {
+    const schedule = schedules[s];
+    if (!schedule.schedule.disable) logger.info('[egg-schedule]: register schedule %s', schedule.key);
+  }
+
+  // register schedule event
+  app.messenger.on('egg-schedule', info => {
+    const { id, key } = info;
+    const schedule = schedules[key];
+
+    logger.debug(`[Job#${id}] ${key} task received by app`);
+
+    if (!schedule) {
+      logger.warn(`[Job#${id}] ${key} unknown task`);
+      return;
+    }
+
+    /* istanbul ignore next */
+    if (schedule.schedule.disable) {
+      logger.warn(`[Job#${id}] ${key} disable`);
+      return;
+    }
+
+    logger.info(`[Job#${id}] ${key} executing by app`);
+
+    // run with anonymous context
+    const ctx = app.createAnonymousContext({
+      method: 'SCHEDULE',
+      url: `/__schedule?path=${key}&${qs.stringify(schedule.schedule)}`,
+    });
+
+    const start = Date.now();
+
+    // execute
+    return schedule.task(ctx, ...info.args)
+      .catch(err => {
+        logger.error(`[Job#${id}] ${key} execute error.`, err);
+        return err;
+      })
+      .then(err => {
+        const success = !err;
+        const rt = Date.now() - start;
+
+        logger[success ? 'info' : 'error'](`[Job#${id}] ${key} execute ${success ? 'succeed' : 'failed'}, used ${rt}ms`);
+
+        Object.assign(info, {
+          success,
+          workerId: process.pid,
+          rt,
+          message: err && err.message,
+        });
+
+        // notify agent job finish
+        app.messenger.sendToAgent('egg-schedule', info);
+      });
+  });
 
   // for test purpose
   app.runSchedule = schedulePath => {
@@ -36,51 +95,4 @@ module.exports = app => {
 
     return schedule.task(ctx);
   };
-
-  // log schedule list
-  for (const s in schedules) {
-    const schedule = schedules[s];
-    if (!schedule.schedule.disable) app.coreLogger.info('[egg-schedule]: register schedule %s', schedule.key);
-  }
-
-  // register schedule event
-  app.messenger.on('egg-schedule', data => {
-    const id = data.id;
-    const key = data.key;
-    const schedule = schedules[key];
-    const logger = app.loggers.scheduleLogger;
-    logger.info(`[${id}] ${key} task received by app`);
-
-    if (!schedule) {
-      logger.warn(`[${id}] ${key} unknown task`);
-      return;
-    }
-    /* istanbul ignore next */
-    if (schedule.schedule.disable) return;
-
-    // run with anonymous context
-    const ctx = app.createAnonymousContext({
-      method: 'SCHEDULE',
-      url: `/__schedule?path=${key}&${qs.stringify(schedule.schedule)}`,
-    });
-
-    const start = Date.now();
-    const task = schedule.task;
-    logger.info(`[${id}] ${key} executing by app`);
-    // execute
-    task(ctx, ...data.args)
-      .then(() => true) // succeed
-      .catch(err => {
-        logger.error(`[${id}] ${key} execute error.`, err);
-        err.message = `[egg-schedule] ${key} execute error. ${err.message}`;
-        app.logger.error(err);
-        return false; // failed
-      })
-      .then(success => {
-        const rt = Date.now() - start;
-        const status = success ? 'succeed' : 'failed';
-        ctx.coreLogger.info(`[egg-schedule] ${key} execute ${status}, used ${rt}ms`);
-        logger[success ? 'info' : 'error'](`[${id}] ${key} execute ${status}, used ${rt}ms`);
-      });
-  });
 };

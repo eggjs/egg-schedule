@@ -37,7 +37,8 @@
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.14.0",
     "eslint": "^4.16.0",
-    "eslint-config-egg": "^6.0.0"
+    "eslint-config-egg": "^6.0.0",
+    "mz-modules": "^2.1.0"
   },
   "engines": {
     "node": ">=8.0.0"

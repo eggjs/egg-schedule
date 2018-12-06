@@ -20,9 +20,9 @@
 [download-image]: https://img.shields.io/npm/dm/egg-schedule.svg?style=flat-square
 [download-url]: https://npmjs.org/package/egg-schedule
 
-A schedule plugin for egg. It supports two scheduler types, `worker` and `all`, and can be extended by other plugins.
+A schedule plugin for egg, has been built-in for egg enabled by default.
 
-`egg-schedule` has been built-in for egg. It is enabled by default.
+It has a built-in timer strategy, and can be extended by other plugins.
 
 ## Usage
 
@@ -36,6 +36,7 @@ class CleanDB extends Subscription {
   /**
    * @property {Object} schedule
    *  - {String} type - schedule type, `worker` or `all` or your custom types.
+   *  - {String} [mode] - timer mode, `rate` or `delay`(which start next schedule after last one finish), left undefined will be treated as `rate`.
    *  - {String} [cron] - cron expression, see [below](#cron-style-scheduling)
    *  - {Object} [cronOptions] - cron options, see [cron-parser#options](https://github.com/harrisiirak/cron-parser#options)
    *  - {String | Number} [interval] - interval expression in millisecond or express explicitly like '1h'. see [below](#interval-style-scheduling)
@@ -77,7 +78,7 @@ exports.task = async function (ctx) {
 
 ## Overview
 
-`egg-schedule` supports both time-based scheduling and interval-based scheduling.
+`egg-schedule` supports both cron-based scheduling and interval-based scheduling.
 
 Schedule decision is being made by `agent` process. `agent` triggers a task and sends message to `worker` process. Then, one or all `worker` process(es) execute the task based on schedule type.
 
@@ -93,7 +94,6 @@ You can get anonymous context with `this.ctx`.
 
 - ctx.method: `SCHEDULE`
 - ctx.path: `/__schedule?path=${schedulePath}&${schedule}`.
-
 
 To create a task, `subscribe` can be generator function or async function. For example:
 
@@ -120,7 +120,7 @@ class CleanDB extends Subscription {
 
 ## Scheduling
 
-`schedule` is an object that contains one required property, `type`, and optional properties, `{ cron, cronOptions, interval, immediate, disable, env }`.
+`schedule` is an object that contains one required property, `type`, and optional properties, `{ cron, cronOptions, interval, immediate, mode, disable, env }`.
 
 ### Cron-style Scheduling
 
@@ -130,7 +130,7 @@ Use [cron-parser](https://github.com/harrisiirak/cron-parser).
 >
 > `@hourly / @daily / @weekly / @monthly / @yearly` is also supported.
 
-```
+```bash
 *    *    *    *    *    *
 ┬    ┬    ┬    ┬    ┬    ┬
 │    │    │    │    │    |
@@ -168,16 +168,22 @@ exports.schedule = {
   interval: '3h',
 };
 ```
+
 **Notice: Egg itself WON'T pay attention to an evil problem of `setInterval` (for details, please see:  https://www.thecodeship.com/web-development/alternative-to-javascript-evil-setinterval/ ). So you have to make sure that your actual execution time of your callback set in the `setInterval` must be smaller / equal to your delay time in that function.**
+
+### Schedule Mode
+
+- `rate`: Next execution will trigger task at a fix rate, regardless of its execution time.
+- `delay`: Next execution will wait for last job finish then start after delay time. (do not supported by `all` type)
 
 ### Schedule Type
 
 **Build-in support is:**
 
-  - **worker**: will be executed in one random worker when schedule run.
-  - **all**: will be executed in all workers when schedule run.
+- `worker`: will be executed in one random worker when schedule run.
+- `all`: will be executed in all workers when schedule run.
 
-**Custom schedule**
+**Custom schedule:**
 
 To create a custom schedule, simply extend `agent.ScheduleStrategy` and register it by `agent.schedule.use(type, clz)`.
 You can schedule the task to be executed by one random worker or all workers with the built-in method `this.sendOne(...args)` or `this.sendAll(...args)` which support params, it will pass to `subscribe(...args)` or `task(ctx, ...args)`.

@@ -16,6 +16,11 @@ module.exports = agent => {
     agent.schedule.init();
   });
 
+  // dispatch job finish event to strategy
+  agent.messenger.on('egg-schedule', (...args) => {
+    agent.schedule.onJobFinish(...args);
+  });
+
   agent.messenger.once('egg-ready', () => {
     // start schedule after worker ready
     agent.schedule.start();

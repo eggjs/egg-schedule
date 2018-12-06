@@ -4,6 +4,7 @@ const mm = require('egg-mock');
 const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
+const { sleep } = require('mz-modules');
 
 describe('test/schedule.test.js', () => {
   let app;
@@ -21,9 +22,9 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cron') === 1);
 
       const scheduleLog = getScheduleLogContent('worker');
-      assert(contains(scheduleLog, 'cron.js triggered') === 1);
+      assert(contains(scheduleLog, 'cron.js executing by app') === 1);
       assert(contains(scheduleLog, 'cron.js execute succeed') === 1);
-      assert(contains(scheduleLog, 'interval.js triggered') === 1);
+      assert(contains(scheduleLog, 'interval.js executing by app') === 1);
       assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
     });
 
@@ -33,10 +34,10 @@ describe('test/schedule.test.js', () => {
       await app.ready();
       await sleep(8000);
       const log = getLogContent('cronOptions');
-      const agentLog = getAgentLogContent('cronOptions');
+      const scheduleLog = getScheduleLogContent('cronOptions');
       // console.log(log);
       assert(contains(log, 'cron-options') >= 1);
-      assert(/cron-options.js reach endDate, will stop/.test(agentLog));
+      assert(/cron-options.js reach endDate, will stop/.test(scheduleLog));
     });
 
     it('should support context', async () => {
@@ -99,6 +100,21 @@ describe('test/schedule.test.js', () => {
       // console.log(log);
       assert(contains(log, 'immediate-onlyonce') === 1);
     });
+
+    it('should support mode=delay', async () => {
+      app = mm.cluster({ baseDir: 'worker-delay', workers: 2, cache: false });
+      await app.ready();
+      await sleep(5000);
+      const log = getLogContent('worker-delay');
+      assert(contains(log, 'interval') === 1);
+      assert(contains(log, 'cron') === 1);
+
+      const scheduleLog = getScheduleLogContent('worker-delay');
+      assert(contains(scheduleLog, 'cron.js executing by app') === 1);
+      assert(contains(scheduleLog, 'cron.js execute succeed') === 1);
+      assert(contains(scheduleLog, 'interval.js executing by app') === 1);
+      assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
+    });
   });
 
   describe('schedule type all', () => {
@@ -112,10 +128,15 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cron') === 2);
 
       const scheduleLog = getScheduleLogContent('all');
-      assert(contains(scheduleLog, 'cron.js triggered') === 1);
       assert(contains(scheduleLog, 'cron.js execute succeed') === 2);
-      assert(contains(scheduleLog, 'interval.js triggered') === 1);
       assert(contains(scheduleLog, 'interval.js execute succeed') === 2);
+    });
+
+    it('should not support mode=delay', async () => {
+      app = mm.cluster({ baseDir: 'all-delay', workers: 2 });
+      await app.ready();
+      await sleep(1000);
+      assert(/delay is not supported/.test(getErrorLogContent('all-delay')));
     });
   });
 
@@ -177,7 +198,7 @@ describe('test/schedule.test.js', () => {
       app = mm.cluster({ baseDir: 'scheduleError', workers: 2 });
       await app.ready();
       await sleep(1000);
-      assert(/\[egg-schedule\] schedule\.interval or schedule\.cron or schedule\.immediate must be present/.test(getErrorLogContent('scheduleError')));
+      assert(/schedule\.interval or schedule\.cron or schedule\.immediate must be present/.test(getErrorLogContent('scheduleError')));
     });
   });
 
@@ -215,8 +236,6 @@ describe('test/schedule.test.js', () => {
       app = mm.cluster({ baseDir: 'executeError', workers: 2 });
       await app.ready();
       await sleep(5000);
-      const errorLog = getErrorLogContent('executeError');
-      assert(contains(errorLog, 'execute error') === 2);
       const scheduleLog = getScheduleLogContent('executeError');
       assert(contains(scheduleLog, 'execute error') === 2);
     });
@@ -365,9 +384,9 @@ describe('test/schedule.test.js', () => {
       assert(log.match(/ignore schedule .*local\.js/));
 
       const scheduleLog = getScheduleLogContent('env');
-      assert(contains(scheduleLog, 'undefined.js triggered') >= 1);
-      assert(contains(scheduleLog, 'unittest.js triggered') >= 1);
-      assert(contains(scheduleLog, 'local.js triggered') === 0);
+      assert(contains(scheduleLog, 'undefined.js execute succeed') >= 1);
+      assert(contains(scheduleLog, 'unittest.js execute succeed') >= 1);
+      assert(contains(scheduleLog, 'local.js execute succeed') === 0);
     });
   });
 
@@ -383,19 +402,11 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, ' customDirectory') === 1);
 
       const scheduleLog = getScheduleLogContent('customDirectory');
-      assert(contains(scheduleLog, 'custom.js triggered') === 1);
       assert(contains(scheduleLog, 'custom.js execute succeed') === 1);
-      assert(contains(scheduleLog, 'interval.js triggered') === 1);
       assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
     });
   });
 });
-
-function sleep(time) {
-  return new Promise(resolve => {
-    setTimeout(resolve, time);
-  });
-}
 
 function getCoreLogContent(name) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'egg-web.log');

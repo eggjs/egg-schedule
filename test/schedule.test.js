@@ -100,22 +100,6 @@ describe('test/schedule.test.js', () => {
       // console.log(log);
       assert(contains(log, 'immediate-onlyonce') === 1);
     });
-
-    it('should support mode=delay', async () => {
-      app = mm.cluster({ baseDir: 'worker-delay', workers: 2, cache: false });
-      // app.debug();
-      await app.ready();
-      await sleep(5000);
-      const log = getLogContent('worker-delay');
-      assert(contains(log, 'interval') <= 2);
-      assert(contains(log, 'cron') <= 2);
-
-      const scheduleLog = getScheduleLogContent('worker-delay');
-      assert(contains(scheduleLog, 'cron.js execute succeed') <= 2);
-      assert(contains(scheduleLog, 'cron.js finish event received by agent from worker') <= 2);
-      assert(contains(scheduleLog, 'interval.js execute succeed') <= 2);
-      assert(contains(scheduleLog, 'interval.js finish event received by agent from worker') <= 2);
-    });
   });
 
   describe('schedule type all', () => {
@@ -131,13 +115,6 @@ describe('test/schedule.test.js', () => {
       const scheduleLog = getScheduleLogContent('all');
       assert(contains(scheduleLog, 'cron.js execute succeed') === 2);
       assert(contains(scheduleLog, 'interval.js execute succeed') === 2);
-    });
-
-    it('should not support mode=delay', async () => {
-      app = mm.cluster({ baseDir: 'all-delay', workers: 2 });
-      await app.ready();
-      await sleep(5000);
-      assert(/delay is not supported/.test(getErrorLogContent('all-delay')));
     });
   });
 
@@ -197,9 +174,10 @@ describe('test/schedule.test.js', () => {
   describe('schedule config error', () => {
     it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'scheduleError', workers: 2 });
+      // app.debug();
       await app.ready();
-      await sleep(5000);
-      assert(/schedule\.interval or schedule\.cron or schedule\.immediate must be present/.test(getErrorLogContent('scheduleError')));
+      await sleep(3000);
+      app.expect('stderr', /schedule\.interval or schedule\.cron or schedule\.immediate must be present/);
     });
   });
 
@@ -207,7 +185,7 @@ describe('test/schedule.test.js', () => {
     it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
       await app.ready();
-      await sleep(5000);
+      await sleep(3000);
       app.expect('stderr', /schedule type \[undefined\] is not defined/);
     });
   });
@@ -218,7 +196,7 @@ describe('test/schedule.test.js', () => {
       // app.debug();
       await app.ready();
       await sleep(1000);
-      assert(/parse cron instruction\(invalid instruction\) error/.test(getErrorLogContent('cronError')));
+      app.expect('stderr', /parse cron instruction\(invalid instruction\) error/);
     });
   });
 
@@ -419,6 +397,7 @@ function getLogContent(name) {
   return fs.readFileSync(logPath, 'utf8');
 }
 
+/* eslint-disable-next-line no-unused-vars */
 function getErrorLogContent(name) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'common-error.log');
   return fs.readFileSync(logPath, 'utf8');

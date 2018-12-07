@@ -20,9 +20,9 @@
 [download-image]: https://img.shields.io/npm/dm/egg-schedule.svg?style=flat-square
 [download-url]: https://npmjs.org/package/egg-schedule
 
-A schedule plugin for egg, has been built-in for egg enabled by default.
+A schedule plugin for egg, has been built-in plugin for egg enabled by default.
 
-It has a built-in timer strategy, and can be extended by other plugins.
+It's fully extendable for developer and provide a simple built-in TimerStrategy.
 
 ## Usage
 
@@ -36,7 +36,6 @@ class CleanDB extends Subscription {
   /**
    * @property {Object} schedule
    *  - {String} type - schedule type, `worker` or `all` or your custom types.
-   *  - {String} [mode] - timer mode, `rate` or `delay`(which start next schedule after last one finish), left undefined will be treated as `rate`.
    *  - {String} [cron] - cron expression, see [below](#cron-style-scheduling)
    *  - {Object} [cronOptions] - cron options, see [cron-parser#options](https://github.com/harrisiirak/cron-parser#options)
    *  - {String | Number} [interval] - interval expression in millisecond or express explicitly like '1h'. see [below](#interval-style-scheduling)
@@ -120,7 +119,7 @@ class CleanDB extends Subscription {
 
 ## Scheduling
 
-`schedule` is an object that contains one required property, `type`, and optional properties, `{ cron, cronOptions, interval, immediate, mode, disable, env }`.
+`schedule` is an object that contains one required property, `type`, and optional properties, `{ cron, cronOptions, interval, immediate, disable, env }`.
 
 ### Cron-style Scheduling
 
@@ -169,12 +168,7 @@ exports.schedule = {
 };
 ```
 
-**Notice: Egg itself WON'T pay attention to an evil problem of `setInterval` (for details, please see:  https://www.thecodeship.com/web-development/alternative-to-javascript-evil-setinterval/ ). So you have to make sure that your actual execution time of your callback set in the `setInterval` must be smaller / equal to your delay time in that function.**
-
-### Schedule Mode
-
-- `rate`: Next execution will trigger task at a fix rate, regardless of its execution time.
-- `delay`: Next execution will wait for last job finish then start after delay time. (do not supported by `all` type)
+**Notice: Egg built-in TimerStrategy will schedule each execution at a fix rate, regardless of its execution time. So you have to make sure that your actual execution time of your `task/subscribe` must be smaller than your delay time.**
 
 ### Schedule Type
 

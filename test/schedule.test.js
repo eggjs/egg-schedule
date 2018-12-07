@@ -136,7 +136,7 @@ describe('test/schedule.test.js', () => {
     it('should not support mode=delay', async () => {
       app = mm.cluster({ baseDir: 'all-delay', workers: 2 });
       await app.ready();
-      await sleep(3000);
+      await sleep(5000);
       assert(/delay is not supported/.test(getErrorLogContent('all-delay')));
     });
   });
@@ -198,7 +198,7 @@ describe('test/schedule.test.js', () => {
     it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'scheduleError', workers: 2 });
       await app.ready();
-      await sleep(3000);
+      await sleep(5000);
       assert(/schedule\.interval or schedule\.cron or schedule\.immediate must be present/.test(getErrorLogContent('scheduleError')));
     });
   });
@@ -207,7 +207,7 @@ describe('test/schedule.test.js', () => {
     it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
       await app.ready();
-      await sleep(3000);
+      await sleep(5000);
       app.expect('stderr', /schedule type \[undefined\] is not defined/);
     });
   });

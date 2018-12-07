@@ -103,6 +103,7 @@ describe('test/schedule.test.js', () => {
 
     it('should support mode=delay', async () => {
       app = mm.cluster({ baseDir: 'worker-delay', workers: 2, cache: false });
+      // app.debug();
       await app.ready();
       await sleep(5000);
       const log = getLogContent('worker-delay');
@@ -110,10 +111,10 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'cron') === 1);
 
       const scheduleLog = getScheduleLogContent('worker-delay');
-      assert(contains(scheduleLog, 'cron.js executing by app') === 1);
       assert(contains(scheduleLog, 'cron.js execute succeed') === 1);
-      assert(contains(scheduleLog, 'interval.js executing by app') === 1);
+      assert(contains(scheduleLog, 'cron.js finish event received by agent from worker') === 1);
       assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
+      assert(contains(scheduleLog, 'interval.js finish event received by agent from worker') === 1);
     });
   });
 

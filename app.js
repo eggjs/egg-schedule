@@ -71,11 +71,22 @@ module.exports = app => {
   });
 
   // for test purpose
+  const directory = [].concat(path.join(app.config.baseDir, 'app/schedule'), app.config.schedule.directory || []);
   app.runSchedule = schedulePath => {
-    if (!path.isAbsolute(schedulePath)) {
-      schedulePath = path.join(app.config.baseDir, 'app/schedule', schedulePath);
+    // resolve real path
+    if (path.isAbsolute(schedulePath)) {
+      schedulePath = require.resolve(schedulePath);
+    } else {
+      for (const dir of directory) {
+        try {
+          schedulePath = require.resolve(path.join(dir, schedulePath));
+          break;
+        } catch (_) {
+          /* istanbul ignore next */
+        }
+      }
     }
-    schedulePath = require.resolve(schedulePath);
+
     let schedule;
 
     try {

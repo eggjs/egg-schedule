@@ -257,7 +257,7 @@ config.customLogger = {
 
 ### Customize directory
 
-If you want to put schedule code in other directory, you can use this config.
+If you want to add additional schedule directories, you can use this config.
 
 ```js
 // config/config.default.js

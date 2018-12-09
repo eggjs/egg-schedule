@@ -259,6 +259,16 @@ describe('test/schedule.test.js', () => {
       await app.ready();
       await app.runSchedule(require.resolve('../node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
     });
+
+    it('should run schedule by relative path success at customDirectory', async () => {
+      app = mm.app({ baseDir: 'customDirectory', cache: false });
+      await app.ready();
+      await app.runSchedule('custom');
+      await sleep(1000);
+      const log = getLogContent('customDirectory');
+      // console.log(log);
+      assert(contains(log, 'customDirectory') === 1);
+    });
   });
 
   describe('stop schedule', () => {

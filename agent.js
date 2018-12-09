@@ -5,7 +5,9 @@ const AllStrategy = require('./lib/strategy/all');
 
 module.exports = agent => {
   // don't redirect scheduleLogger
-  agent.getLogger('scheduleLogger').unredirect('error');
+  const logger = agent.getLogger('scheduleLogger');
+  const errorLogger = agent.getLogger('errorLogger');
+  logger.unredirect('error', errorLogger, { duplicate: true });
 
   // register built-in strategy
   agent.schedule.use('worker', WorkerStrategy);

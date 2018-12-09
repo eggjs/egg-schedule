@@ -7,7 +7,8 @@ const path = require('path');
 module.exports = app => {
   // don't redirect scheduleLogger
   const logger = app.getLogger('scheduleLogger');
-  logger.unredirect('error');
+  const errorLogger = app.getLogger('errorLogger');
+  logger.unredirect('error', errorLogger, { duplicate: true });
 
   const schedules = loadSchedule(app);
 

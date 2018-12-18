@@ -1,17 +1,21 @@
 'use strict';
 
 const Strategy = require('../../lib/strategy/base');
+const TimerStrategy = require('../../lib/strategy/timer');
 const Schedule = require('../../lib/schedule');
-const Timer = require('../../lib/timer');
 
 const SCHEDULE = Symbol('agent#schedule');
-const TIMER = Symbol('agent#scheduleTimer');
 
 module.exports = {
   /**
    * @member agent#ScheduleStrategy
    */
   ScheduleStrategy: Strategy,
+
+  /**
+   * @member agent#TimerScheduleStrategy
+   */
+  TimerScheduleStrategy: TimerStrategy,
 
   /**
    * @member agent#schedule
@@ -24,18 +28,5 @@ module.exports = {
       });
     }
     return this[SCHEDULE];
-  },
-
-  /**
-   * @member agent#scheduleTimer
-   */
-  get scheduleTimer() {
-    if (!this[TIMER]) {
-      this[TIMER] = new Timer(this);
-      this.beforeClose(() => {
-        return this[TIMER].close();
-      });
-    }
-    return this[TIMER];
   },
 };

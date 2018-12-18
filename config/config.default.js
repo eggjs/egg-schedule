@@ -12,5 +12,10 @@ module.exports = appInfo => {
     },
   };
 
+  config.schedule = {
+    // custom additional directory, full path
+    directory: [],
+  };
+
   return config;
 };

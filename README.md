@@ -20,9 +20,9 @@
 [download-image]: https://img.shields.io/npm/dm/egg-schedule.svg?style=flat-square
 [download-url]: https://npmjs.org/package/egg-schedule
 
-A schedule plugin for egg. It supports two scheduler types, `worker` and `all`, and can be extended by other plugins.
+A schedule plugin for egg, has been built-in plugin for egg enabled by default.
 
-`egg-schedule` has been built-in for egg. It is enabled by default.
+It's fully extendable for developer and provide a simple built-in TimerStrategy.
 
 ## Usage
 
@@ -77,7 +77,7 @@ exports.task = async function (ctx) {
 
 ## Overview
 
-`egg-schedule` supports both time-based scheduling and interval-based scheduling.
+`egg-schedule` supports both cron-based scheduling and interval-based scheduling.
 
 Schedule decision is being made by `agent` process. `agent` triggers a task and sends message to `worker` process. Then, one or all `worker` process(es) execute the task based on schedule type.
 
@@ -93,7 +93,6 @@ You can get anonymous context with `this.ctx`.
 
 - ctx.method: `SCHEDULE`
 - ctx.path: `/__schedule?path=${schedulePath}&${schedule}`.
-
 
 To create a task, `subscribe` can be generator function or async function. For example:
 
@@ -130,7 +129,7 @@ Use [cron-parser](https://github.com/harrisiirak/cron-parser).
 >
 > `@hourly / @daily / @weekly / @monthly / @yearly` is also supported.
 
-```
+```bash
 *    *    *    *    *    *
 ┬    ┬    ┬    ┬    ┬    ┬
 │    │    │    │    │    |
@@ -168,16 +167,17 @@ exports.schedule = {
   interval: '3h',
 };
 ```
-**Notice: Egg itself WON'T pay attention to an evil problem of `setInterval` (for details, please see:  https://www.thecodeship.com/web-development/alternative-to-javascript-evil-setinterval/ ). So you have to make sure that your actual execution time of your callback set in the `setInterval` must be smaller / equal to your delay time in that function.**
+
+**Notice: Egg built-in TimerStrategy will schedule each execution at a fix rate, regardless of its execution time. So you have to make sure that your actual execution time of your `task/subscribe` must be smaller than your delay time.**
 
 ### Schedule Type
 
 **Build-in support is:**
 
-  - **worker**: will be executed in one random worker when schedule run.
-  - **all**: will be executed in all workers when schedule run.
+- `worker`: will be executed in one random worker when schedule run.
+- `all`: will be executed in all workers when schedule run.
 
-**Custom schedule**
+**Custom schedule:**
 
 To create a custom schedule, simply extend `agent.ScheduleStrategy` and register it by `agent.schedule.use(type, clz)`.
 You can schedule the task to be executed by one random worker or all workers with the built-in method `this.sendOne(...args)` or `this.sendAll(...args)` which support params, it will pass to `subscribe(...args)` or `task(ctx, ...args)`.
@@ -257,7 +257,7 @@ config.customLogger = {
 
 ### Customize directory
 
-If you want to put schedule code in other directory, you can use this config.
+If you want to add additional schedule directories, you can use this config.
 
 ```js
 // config/config.default.js

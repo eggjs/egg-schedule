@@ -4,3 +4,4 @@ node_modules/
 coverage/
 run/
 .vscode
+.nyc_output

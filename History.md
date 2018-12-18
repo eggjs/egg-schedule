@@ -1,4 +1,10 @@
 
+3.6.0 / 2018-12-18
+==================
+
+**features**
+  * [[`2c64d3c`](https://github.com/eggjs/egg-schedule/commit/2c64d3c6dd386dedaa784180ebb6c61b89fd1d53)] - feat: support custom directory (#43) (TZ <<atian25@qq.com>>)
+
 3.5.0 / 2018-12-05
 ==================
 

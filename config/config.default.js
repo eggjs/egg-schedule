@@ -1,14 +1,12 @@
 'use strict';
 
-const path = require('path');
-
-module.exports = appInfo => {
+module.exports = () => {
   const config = {};
 
   config.customLogger = {
     scheduleLogger: {
       consoleLevel: 'NONE',
-      file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
+      file: 'egg-schedule.log',
     },
   };
 

@@ -1,4 +1,10 @@
 
+3.6.1 / 2019-03-20
+==================
+
+**others**
+  * [[`0960ff8`](http://github.com/eggjs/egg-schedule/commit/0960ff8f058c2bbb8ad2afb333bc557d719ec99b)] - chore: use relative log path (#45) (TZ | 天猪 <<atian25@qq.com>>)
+
 3.6.0 / 2018-12-18
 ==================
 

@@ -231,8 +231,8 @@ module.exports = app => {
         env: [ 'prod' ],
       };
     }
-    async subscribe(ctx) {
-      await ctx.sync();
+    async subscribe() {
+      await this.ctx.sync();
     }
   }
   return SyncTask;

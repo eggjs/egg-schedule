@@ -68,7 +68,7 @@ module.exports = app => {
 
   // for test purpose
   const directory = [].concat(path.join(app.config.baseDir, 'app/schedule'), app.config.schedule.directory || []);
-  app.runSchedule = schedulePath => {
+  app.runSchedule = (schedulePath, ...args) => {
     // resolve real path
     if (path.isAbsolute(schedulePath)) {
       schedulePath = require.resolve(schedulePath);
@@ -101,6 +101,6 @@ module.exports = app => {
       url: `/__schedule?path=${schedulePath}&${qs.stringify(schedule.schedule)}`,
     });
 
-    return schedule.task(ctx);
+    return schedule.task(ctx, ...args);
   };
 };

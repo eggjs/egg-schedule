@@ -269,6 +269,16 @@ describe('test/schedule.test.js', () => {
       // console.log(log);
       assert(contains(log, 'customDirectory') === 1);
     });
+
+    it('should run schedule with args', async () => {
+      app = mm.app({ baseDir: 'worker', cache: false });
+      await app.ready();
+      await app.runSchedule('sub/cron', 'test');
+      await sleep(1000);
+      const log = getLogContent('worker');
+      // console.log(log);
+      assert(contains(log, 'cron test') === 1);
+    });
   });
 
   describe('stop schedule', () => {

@@ -1,4 +1,13 @@
 
+3.6.2 / 2019-04-29
+==================
+
+**fixes**
+  * [[`98a0cf7`](http://github.com/eggjs/egg-schedule/commit/98a0cf78012bd138cd8b0893c1acb6527cfecf0e)] - fix: runSchedule should pass args (#47) (TZ | 天猪 <<atian25@qq.com>>)
+
+**others**
+  * [[`77fc7d3`](http://github.com/eggjs/egg-schedule/commit/77fc7d3b46d1c57acc69cb3931241f9cb8165a38)] - docs: fix ctx ref (#46) (祝传鹏 <<Luomusha@gmail.com>>)
+
 3.6.1 / 2019-03-20
 ==================
 

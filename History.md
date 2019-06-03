@@ -1,4 +1,10 @@
 
+3.6.3 / 2019-06-03
+==================
+
+**fixes**
+  * [[`bce393f`](http://github.com/eggjs/egg-schedule/commit/bce393f66f70add9151155d16b90942bab75e89b)] - fix: wrap task should always return promise (#48) (TZ | 天猪 <<atian25@qq.com>>)
+
 3.6.2 / 2019-04-29
 ==================
 

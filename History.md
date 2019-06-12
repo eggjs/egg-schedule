@@ -1,4 +1,10 @@
 
+3.6.4 / 2019-06-12
+==================
+
+**fixes**
+  * [[`b6b17b0`](http://github.com/eggjs/egg-schedule/commit/b6b17b032582dbde6f4f9faecef3dd662726b3e2)] - fix: should use template literal (#49) (Jedmeng <<roy.urey@gmail.com>>)
+
 3.6.3 / 2019-06-03
 ==================
 

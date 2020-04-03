@@ -193,7 +193,7 @@ module.exports = function(agent) {
       });
     }
   }
-  agent.schedule.use('custsom', CustomStrategy);
+  agent.schedule.use('custom', CustomStrategy);
 };
 ```
 

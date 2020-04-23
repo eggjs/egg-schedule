@@ -213,6 +213,7 @@ class ClusterTask extends Subscription {
     await this.ctx.service.someTask.run();
   }
 }
+module.exports = ClusterTask;
 ```
 
 ## Dynamic schedule

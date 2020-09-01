@@ -1,4 +1,15 @@
 
+3.6.5 / 2020-09-01
+==================
+
+**fixes**
+  * [[`7ee8cb3`](http://github.com/eggjs/egg-schedule/commit/7ee8cb3696751ca30bbc3abfb3cbc06a676d2fe7)] - fix: only reject/error detect as fail (#53) (TZ | 天猪 <<atian25@qq.com>>)
+
+**others**
+  * [[`0425031`](http://github.com/eggjs/egg-schedule/commit/0425031279bc98a716671111e3f36bdd0a353017)] - docs: add module exports for custom schedule in document (#52) (Cheng Ju Wu <<sam19970416@gmail.com>>)
+  * [[`7da04fe`](http://github.com/eggjs/egg-schedule/commit/7da04fe5b3adfd572375b02f1063b8d90684743e)] - chore: Update README.md (#51) (Cheng Ju Wu <<sam19970416@gmail.com>>)
+  * [[`13f03b8`](http://github.com/eggjs/egg-schedule/commit/13f03b8681d60dfa8c9d33574cef392dc55c4b27)] - chore: Update .travis.yml (#50) (TZ | 天猪 <<atian25@qq.com>>)
+
 3.6.4 / 2019-06-12
 ==================
 

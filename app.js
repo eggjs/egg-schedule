@@ -3,6 +3,7 @@
 const loadSchedule = require('./lib/load_schedule');
 const qs = require('querystring');
 const path = require('path');
+const is = require('is-type-of');
 
 module.exports = app => {
   const logger = app.getLogger('scheduleLogger');
@@ -45,14 +46,14 @@ module.exports = app => {
     // execute
     return schedule.task(ctx, ...info.args)
       .catch(err => {
-        logger.error(`[Job#${id}] ${key} execute error.`, err);
-        return err;
+        return is.error(err) ? err : new Error(err);
       })
       .then(err => {
-        const success = !err;
+        const success = !is.error(err);
         const rt = Date.now() - start;
 
-        logger[success ? 'info' : 'error'](`[Job#${id}] ${key} execute ${success ? 'succeed' : 'failed'}, used ${rt}ms`);
+        const msg = `[Job#${id}] ${key} execute ${success ? 'succeed' : 'failed'}, used ${rt}ms.`;
+        logger[success ? 'info' : 'error'](msg, success ? '' : err);
 
         Object.assign(info, {
           success,

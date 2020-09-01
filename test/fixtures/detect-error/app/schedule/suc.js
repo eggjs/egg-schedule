@@ -2,9 +2,11 @@
 
 exports.schedule = {
   type: 'worker',
-  cron: '*/5 * * * * *',
+  interval: 40000,
+  immediate: true,
 };
 
 exports.task = async function (ctx) {
-  ctx.logger.info('cron');
+  ctx.logger.info('suc');
+  return true;
 };

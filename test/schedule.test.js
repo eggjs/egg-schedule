@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
 const { sleep } = require('mz-modules');
+const is = require('is-type-of');
 
 describe('test/schedule.test.js', () => {
   let app;
@@ -212,11 +213,12 @@ describe('test/schedule.test.js', () => {
 
   describe('schedule execute error', () => {
     it('should thrown', async () => {
-      app = mm.cluster({ baseDir: 'executeError', workers: 2 });
+      app = mm.cluster({ baseDir: 'executeError', workers: 1 });
+      // app.debug();
       await app.ready();
       await sleep(5000);
       const scheduleLog = getScheduleLogContent('executeError');
-      assert(contains(scheduleLog, 'execute error') === 2);
+      assert(contains(scheduleLog, 'interval.js execute failed') === 2);
     });
   });
 
@@ -240,7 +242,7 @@ describe('test/schedule.test.js', () => {
       await sleep(1000);
       const log = getLogContent('worker');
       // console.log(log);
-      assert(contains(log, 'cron') === 1);
+      assert(contains(log, 'cron') >= 1);
     });
 
     it('should run schedule by absolute path success', async () => {
@@ -251,7 +253,7 @@ describe('test/schedule.test.js', () => {
       await sleep(1000);
       const log = getLogContent('worker');
       // console.log(log);
-      assert(contains(log, 'cron') === 1);
+      assert(contains(log, 'cron') >= 1);
     });
 
     it('should run schedule by absolute package path success', async () => {
@@ -405,6 +407,20 @@ describe('test/schedule.test.js', () => {
       assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
     });
   });
+
+  describe('detect error', () => {
+    it('should works', async () => {
+      app = mm.cluster({ baseDir: 'detect-error', workers: 1, cache: false });
+      app.debug();
+      await app.ready();
+      await sleep(2000);
+
+      const scheduleLog = getScheduleLogContent('detect-error');
+      assert(contains(scheduleLog, 'suc.js execute succeed') === 1);
+      assert(contains(scheduleLog, /fail.js execute failed, used \d+ms. Error: fail/) === 1);
+      assert(contains(scheduleLog, /error.js execute failed, used \d+ms. Error: some err/) === 1);
+    });
+  });
 });
 
 function getCoreLogContent(name) {
@@ -434,5 +450,7 @@ function getScheduleLogContent(name) {
 }
 
 function contains(content, match) {
-  return content.split('\n').filter(line => line.indexOf(match) >= 0).length;
+  return content.split('\n').filter(line => {
+    return is.regexp(match) ? match.test(line) : line.indexOf(match) >= 0;
+  }).length;
 }

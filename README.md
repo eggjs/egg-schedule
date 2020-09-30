@@ -22,11 +22,11 @@
 
 A schedule plugin for egg, has been built-in plugin for egg enabled by default.
 
-It's fully extendable for developer and provide a simple built-in TimerStrategy.
+It's fully extendable for a developer and provides a simple built-in TimerStrategy.
 
 ## Usage
 
-Just add you job file to `{app_root}/app/schedule`.
+Just add your job file to `{app_root}/app/schedule`.
 
 ```js
 // {app_root}/app/schedule/cleandb.js
@@ -60,7 +60,7 @@ class CleanDB extends Subscription {
 module.exports = CleanDB;
 ```
 
-You can also use function simply.
+You can also use function simply like: 
 
 ```js
 exports.schedule = {
@@ -79,22 +79,22 @@ exports.task = async function (ctx) {
 
 `egg-schedule` supports both cron-based scheduling and interval-based scheduling.
 
-Schedule decision is being made by `agent` process. `agent` triggers a task and sends message to `worker` process. Then, one or all `worker` process(es) execute the task based on schedule type.
+Schedule decision is being made by `agent` process. `agent` triggers a task and sends a message to `worker` process. Then, one or all `worker` process(es) execute the task based on schedule type.
 
-To setup a schedule task, simply create a job file in `{app_root}/app/schedule`. A file contains one job and export `schedule` and `task` properties.
+To setup a schedule task, simply create a job file in `{app_root}/app/schedule`. A file contains one job and exports `schedule` and `task` properties.
 
 The rule of thumbs is one job per file.
 
 ## Task
 
-Task is a class which will be instantiated every schedule, and `subscribe` method will be invoked.
+Task is a class which will be instantiated with every schedule, and a `subscribe` method will be invoked.
 
 You can get anonymous context with `this.ctx`.
 
 - ctx.method: `SCHEDULE`
 - ctx.path: `/__schedule?path=${schedulePath}&${schedule}`.
 
-To create a task, `subscribe` can be generator function or async function. For example:
+To create a task, `subscribe` can be a generator function or async function. For example:
 
 ```js
 // A simple logger example
@@ -174,8 +174,8 @@ exports.schedule = {
 
 **Build-in support is:**
 
-- `worker`: will be executed in one random worker when schedule run.
-- `all`: will be executed in all workers when schedule run.
+- `worker`: will be executed in one random worker when a schedule runs.
+- `all`: will be executed in all workers when a schedule runs.
 
 **Custom schedule:**
 

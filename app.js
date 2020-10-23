@@ -79,7 +79,7 @@ module.exports = app => {
     if (path.isAbsolute(schedulePath)) {
       schedulePath = require.resolve(schedulePath);
     } else {
-      const ext = (process.env.EGG_TYPESCRIPT === 'true' &&  Module._extensions['.ts'])
+      const ext = (process.env.EGG_TYPESCRIPT === 'true' && Module._extensions['.ts'])
         ? '.ts'
         : '.js';
       for (const dir of directory) {

@@ -302,14 +302,14 @@ describe('test/schedule.test.js', () => {
       mm(process.env, 'EGG_TYPESCRIPT', 'true');
       require.extensions['.ts'] = require.extensions['.js'];
 
-      const realPath = path.join(__dirname, 'fixtures/symlink/realFile.ts');
-      const targetPath = path.join(__dirname, 'fixtures/symlink/runDir/app/schedule/realFile.ts');
+      const realPath = path.join(__dirname, 'fixtures/symlink/tsRealFile.ts');
+      const targetPath = path.join(__dirname, 'fixtures/symlink/runDir/app/schedule/tsRealFile.ts');
       fs.symlinkSync(realPath, targetPath);
 
       app = mm.app({ baseDir: 'symlink/runDir', cache: false });
       await app.ready();
       try {
-        await app.runSchedule('realFile');
+        await app.runSchedule('tsRealFile');
       } catch (err) {
         assert(false, 'should not throw Cannot find schedule error');
       }

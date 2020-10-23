@@ -5,3 +5,6 @@ coverage/
 run/
 .vscode
 .nyc_output
+
+test/fixtures/symlink/runDir/app/schedule/realFile.js
+test/fixtures/symlink/runDir/app/schedule/tsRealFile.ts

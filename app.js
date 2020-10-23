@@ -4,6 +4,11 @@ const loadSchedule = require('./lib/load_schedule');
 const qs = require('querystring');
 const path = require('path');
 const is = require('is-type-of');
+const BuiltinModule = require('module');
+const Module = module.constructor.length > 1
+  ? module.constructor
+  /* istanbul ignore next */
+  : BuiltinModule;
 
 module.exports = app => {
   const logger = app.getLogger('scheduleLogger');
@@ -74,9 +79,14 @@ module.exports = app => {
     if (path.isAbsolute(schedulePath)) {
       schedulePath = require.resolve(schedulePath);
     } else {
+      const ext = (process.env.EGG_TYPESCRIPT === 'true' &&  Module._extensions['.ts'])
+        ? '.ts'
+        : '.js';
       for (const dir of directory) {
+        const findPath = path.join(dir, schedulePath + ext);
         try {
-          schedulePath = require.resolve(path.join(dir, schedulePath));
+          require(findPath);
+          schedulePath = findPath;
           break;
         } catch (_) {
           /* istanbul ignore next */

@@ -281,6 +281,42 @@ describe('test/schedule.test.js', () => {
       // console.log(log);
       assert(contains(log, 'cron test') === 1);
     });
+
+    it('should run schedule with symlink js file success', async () => {
+      const realPath = path.join(__dirname, 'fixtures/symlink/realFile.js');
+      const targetPath = path.join(__dirname, 'fixtures/symlink/runDir/app/schedule/realFile.js');
+      fs.symlinkSync(realPath, targetPath);
+
+      app = mm.app({ baseDir: 'symlink/runDir', cache: false });
+      await app.ready();
+      try {
+        await app.runSchedule('realFile');
+      } catch (err) {
+        assert(false, 'should not throw Cannot find schedule error');
+      }
+
+      fs.unlinkSync(targetPath);
+    });
+
+    it('should run schedule with symlink ts file success', async () => {
+      mm(process.env, 'EGG_TYPESCRIPT', 'true');
+      require.extensions['.ts'] = require.extensions['.js'];
+
+      const realPath = path.join(__dirname, 'fixtures/symlink/realFile.ts');
+      const targetPath = path.join(__dirname, 'fixtures/symlink/runDir/app/schedule/realFile.ts');
+      fs.symlinkSync(realPath, targetPath);
+
+      app = mm.app({ baseDir: 'symlink/runDir', cache: false });
+      await app.ready();
+      try {
+        await app.runSchedule('realFile');
+      } catch (err) {
+        assert(false, 'should not throw Cannot find schedule error');
+      }
+
+      delete require.extensions['.ts'];
+      fs.unlinkSync(targetPath);
+    });
   });
 
   describe('stop schedule', () => {

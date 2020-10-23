@@ -1,4 +1,13 @@
 
+3.6.6 / 2020-10-23
+==================
+
+**fixes**
+  * [[`3a8ef55`](http://github.com/eggjs/egg-schedule/commit/3a8ef55ff3da580f277755fdb0cca15a12fc2256)] - fix: runSchedule get filePath keep same logic with loader (#55) (mansonchor.github.com <<mansonchor@126.com>>)
+
+**others**
+  * [[`39f4aad`](http://github.com/eggjs/egg-schedule/commit/39f4aadf1f10736a4fa3cedd779a48cb329d5320)] - docs: updated README with grammatical and spelling fixes (#54) (Hridayesh Sharma <<vyasriday7@gmail.com>>)
+
 3.6.5 / 2020-09-01
 ==================
 

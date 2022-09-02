@@ -1,24 +1,24 @@
 'use strict';
 
-const loadSchedule = require('./lib/load_schedule');
 const qs = require('querystring');
 const path = require('path');
 const is = require('is-type-of');
 
 module.exports = app => {
   const logger = app.getLogger('scheduleLogger');
-  const schedules = loadSchedule(app);
+  const scheduleWorker = app.scheduleWorker;
+  scheduleWorker.init();
 
   // log schedule list
-  for (const s in schedules) {
-    const schedule = schedules[s];
+  for (const s in scheduleWorker.scheduleItems) {
+    const schedule = scheduleWorker.scheduleItems[s];
     if (!schedule.schedule.disable) logger.info('[egg-schedule]: register schedule %s', schedule.key);
   }
 
   // register schedule event
   app.messenger.on('egg-schedule', info => {
     const { id, key } = info;
-    const schedule = schedules[key];
+    const schedule = scheduleWorker.scheduleItems[key];
 
     logger.debug(`[Job#${id}] ${key} task received by app`);
 
@@ -87,7 +87,7 @@ module.exports = app => {
     let schedule;
 
     try {
-      schedule = schedules[schedulePath];
+      schedule = scheduleWorker.scheduleItems[schedulePath];
       if (!schedule) {
         throw new Error(`Cannot find schedule ${schedulePath}`);
       }

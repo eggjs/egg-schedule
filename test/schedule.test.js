@@ -222,6 +222,65 @@ describe('test/schedule.test.js', () => {
     });
   });
 
+  describe('schedule.registerSchedule', () => {
+    it('should register succeed', async () => {
+      app = mm.app({ baseDir: 'worker', cache: false });
+      await app.ready();
+      const key = __filename;
+      let scheduleCalled = false;
+      const task = async () => {
+        scheduleCalled = true;
+      };
+      const schedule = {
+        key,
+        task,
+        schedule: {
+          type: 'all',
+          interval: 4000,
+        },
+      };
+      app.agent.schedule.registerSchedule(schedule);
+      app.scheduleWorker.registerSchedule(schedule);
+
+      await app.runSchedule(key);
+      await sleep(1000);
+
+      assert(scheduleCalled === true);
+    });
+
+    it('should unregister succeed', async () => {
+      app = mm.app({ baseDir: 'worker', cache: false });
+      await app.ready();
+      const key = __filename;
+      let scheduleCalled = false;
+      const task = async () => {
+        scheduleCalled = true;
+      };
+      const schedule = {
+        key,
+        task,
+        schedule: {
+          type: 'all',
+          interval: 4000,
+        },
+      };
+      app.agent.schedule.registerSchedule(schedule);
+      app.scheduleWorker.registerSchedule(schedule);
+
+      app.agent.schedule.unregisterSchedule(schedule.key);
+      app.scheduleWorker.unregisterSchedule(schedule.key);
+
+      let err;
+      try {
+        await app.runSchedule(key);
+      } catch (e) {
+        err = e;
+      }
+      assert(err.message.includes('Cannot find schedule'));
+      assert(scheduleCalled === false);
+    });
+  });
+
   describe('app.runSchedule', () => {
     it('should run schedule not exist throw error', async () => {
       app = mm.app({ baseDir: 'worker', cache: false });

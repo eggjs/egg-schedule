@@ -1,4 +1,10 @@
 
+3.7.0 / 2022-09-03
+==================
+
+**features**
+  * [[`ca8b92b`](http://github.com/eggjs/egg-schedule/commit/ca8b92be7e72f3b35e80d8812d378f822f7a02b2)] - feat: add api for register/unregister schedule (#56) (killa <<killa123@126.com>>)
+
 3.6.6 / 2020-10-23
 ==================
 

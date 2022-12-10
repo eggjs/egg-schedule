@@ -31,28 +31,25 @@
     "utility": "^1.16.3"
   },
   "devDependencies": {
-    "autod": "^3.1.0",
-    "egg": "^2.27.0",
-    "egg-bin": "^4.15.0",
-    "egg-ci": "^1.15.0",
-    "egg-mock": "^4.0.1",
-    "eslint": "^7.8.0",
-    "eslint-config-egg": "^8.1.1",
-    "mz-modules": "^2.1.0"
+    "egg": "^3.6.0",
+    "egg-bin": "^5.5.0",
+    "egg-ci": "^2.2.0",
+    "egg-mock": "^5.3.0",
+    "eslint": "^8.29.0",
+    "eslint-config-egg": "^12.1.0"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=14.17.0"
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint -- --fix && egg-bin pkgfiles && npm run test-local",
+    "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
-    "ci": "npm run lint && egg-bin pkgfiles --check && npm run cov",
-    "autod": "autod"
+    "ci": "npm run lint && npm run cov"
   },
   "ci": {
-    "version": "10, 12",
+    "version": "14, 16, 18",
     "license": true
   },
   "author": "dead_horse",

@@ -44,27 +44,29 @@ module.exports = app => {
     const start = Date.now();
 
     // execute
-    return schedule.task(ctx, ...info.args)
-      .catch(err => {
-        return is.error(err) ? err : new Error(err);
-      })
-      .then(err => {
-        const success = !is.error(err);
-        const rt = Date.now() - start;
+    return app.ctxStorage.run(ctx, () => {
+      return schedule.task(ctx, ...info.args)
+        .catch(err => {
+          return is.error(err) ? err : new Error(err);
+        })
+        .then(err => {
+          const success = !is.error(err);
+          const rt = Date.now() - start;
 
-        const msg = `[Job#${id}] ${key} execute ${success ? 'succeed' : 'failed'}, used ${rt}ms.`;
-        logger[success ? 'info' : 'error'](msg, success ? '' : err);
+          const msg = `[Job#${id}] ${key} execute ${success ? 'succeed' : 'failed'}, used ${rt}ms.`;
+          logger[success ? 'info' : 'error'](msg, success ? '' : err);
 
-        Object.assign(info, {
-          success,
-          workerId: process.pid,
-          rt,
-          message: err && err.message,
+          Object.assign(info, {
+            success,
+            workerId: process.pid,
+            rt,
+            message: err && err.message,
+          });
+
+          // notify agent job finish
+          app.messenger.sendToAgent('egg-schedule', info);
         });
-
-        // notify agent job finish
-        app.messenger.sendToAgent('egg-schedule', info);
-      });
+    });
   });
 
   // for test purpose
@@ -102,6 +104,8 @@ module.exports = app => {
       url: `/__schedule?path=${schedulePath}&${qs.stringify(schedule.schedule)}`,
     });
 
-    return schedule.task(ctx, ...args);
+    return app.ctxStorage.run(ctx, () => {
+      return schedule.task(ctx, ...args);
+    });
   };
 };

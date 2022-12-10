@@ -1,6 +1,7 @@
 'use strict';
 
 const ScheduleWorker = require('../../lib/schedule_worker');
+
 const SCHEDULE_WORKER = Symbol('application#scheduleWorker');
 
 module.exports = {

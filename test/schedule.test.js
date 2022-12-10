@@ -1,11 +1,14 @@
-'use strict';
-
 const mm = require('egg-mock');
 const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
-const { sleep } = require('mz-modules');
 const is = require('is-type-of');
+
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
 
 describe('test/schedule.test.js', () => {
   let app;
@@ -25,6 +28,24 @@ describe('test/schedule.test.js', () => {
       const scheduleLog = getScheduleLogContent('worker');
       assert(contains(scheduleLog, 'cron.js executing by app') === 1);
       assert(contains(scheduleLog, 'cron.js execute succeed') === 1);
+      assert(contains(scheduleLog, 'interval.js executing by app') === 1);
+      assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
+    });
+
+    it('should support ctxStorage', async () => {
+      app = mm.cluster({ baseDir: 'worker2', workers: 2, cache: false });
+      // app.debug();
+      await app.ready();
+      await sleep(5000);
+      const log = getLogContent('worker2');
+      // console.log(log);
+      assert(contains(log, 'interval') === 1);
+      assert(contains(log, 'foobar') === 1);
+
+      const scheduleLog = getScheduleLogContent('worker2');
+      // console.log(scheduleLog);
+      assert(contains(scheduleLog, 'foobar.js executing by app') === 1);
+      assert(contains(scheduleLog, 'foobar.js execute succeed') === 1);
       assert(contains(scheduleLog, 'interval.js executing by app') === 1);
       assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
     });
@@ -339,6 +360,21 @@ describe('test/schedule.test.js', () => {
       const log = getLogContent('worker');
       // console.log(log);
       assert(contains(log, 'cron test') === 1);
+    });
+
+    it('should run schedule support ctxStorage', async () => {
+      app = mm.app({ baseDir: 'worker2', cache: false });
+      await app.ready();
+      app.mockContext({
+        tracer: {
+          traceId: 'mock-trace-123',
+        },
+      });
+      await app.runSchedule('sub/foobar', 'use app.logger.info should work');
+      await sleep(1000);
+      const log = getLogContent('worker2');
+      // console.log(log);
+      assert(contains(log, ' [-/127.0.0.1/mock-trace-123/0ms GET /] foobar use app.logger.info should work') === 1);
     });
 
     it('should run schedule with symlink js file success', async () => {

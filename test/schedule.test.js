@@ -486,6 +486,19 @@ describe('test/schedule.test.js', () => {
       assert(contains(log, 'interval') === 1);
       assert(contains(log, 'cron') === 1);
     });
+
+    it('should support interval and cron when config.logger.enableFastContextLogger = true', async () => {
+      app = mm.cluster({ baseDir: 'subscription-enableFastContextLogger', workers: 2, cache: false });
+      // app.debug();
+      await app.ready();
+      await sleep(5000);
+      const log = getLogContent('subscription-enableFastContextLogger');
+      // console.log(log);
+      assert(contains(log, 'interval') === 1);
+      assert(contains(log, 'cron') === 1);
+      // 2022-12-11 16:44:55,009 INFO 22958 [-/127.0.0.1/15d62420-7930-11ed-86ce-31ec9c2e0d18/3ms SCHEDULE /__schedule
+      assert.match(log, / INFO \w+ \[-\/127\.0\.0\.1\/\w+\-\w+\-\w+\-\w+\-\w+\/\d+ms SCHEDULE \/__schedule/);
+    });
   });
 
   describe('send with params', () => {

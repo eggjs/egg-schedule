@@ -374,7 +374,7 @@ describe('test/schedule.test.js', () => {
       await sleep(1000);
       const log = getLogContent('worker2');
       // console.log(log);
-      assert(contains(log, ' [-/127.0.0.1/mock-trace-123/0ms GET /] foobar use app.logger.info should work') === 1);
+      assert.match(log, / \[-\/127.0.0.1\/mock-trace-123\/\d+ms GET \/] foobar use app.logger.info should work/);
     });
 
     it('should run schedule with symlink js file success', async () => {

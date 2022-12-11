@@ -1,4 +1,14 @@
 
+4.0.0 / 2022-12-11
+==================
+
+**features**
+  * [[`66e7aeb`](http://github.com/eggjs/egg-schedule/commit/66e7aeb87dfc8994529ec9d8407a219461345d27)] - 📦 NEW: [BREAKING] Support localStorage to run task (#58) (fengmk2 <<fengmk2@gmail.com>>)
+
+**others**
+  * [[`7672269`](http://github.com/eggjs/egg-schedule/commit/7672269168f2a19a5e239fc58e625b32f89693cc)] - Create codeql-analysis.yml (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`bab8585`](http://github.com/eggjs/egg-schedule/commit/bab8585a64dbc7d7c0ff1c1b88b5dc544b9e8aac)] - ci: del appveyor (#57) (killa <<killa123@126.com>>)
+
 3.7.0 / 2022-09-03
 ==================
 

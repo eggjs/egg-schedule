@@ -31,7 +31,7 @@
     "utility": "^1.16.3"
   },
   "devDependencies": {
-    "egg": "^3.6.0",
+    "egg": "^3.7.0",
     "egg-bin": "^5.5.0",
     "egg-ci": "^2.2.0",
     "egg-mock": "^5.3.0",

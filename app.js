@@ -16,7 +16,9 @@ module.exports = app => {
   }
 
   // register schedule event
-  app.messenger.on('egg-schedule', info => {
+  app.messenger.on('egg-schedule', async info => {
+    await app.ready();
+
     const { id, key } = info;
     const schedule = scheduleWorker.scheduleItems[key];
 
@@ -43,30 +45,33 @@ module.exports = app => {
 
     const start = Date.now();
 
-    // execute
-    return app.ctxStorage.run(ctx, () => {
-      return schedule.task(ctx, ...info.args)
-        .catch(err => {
-          return is.error(err) ? err : new Error(err);
-        })
-        .then(err => {
-          const success = !is.error(err);
-          const rt = Date.now() - start;
+    let success;
+    let e;
+    try {
+      // execute
+      await app.ctxStorage.run(ctx, async () => {
+        return await schedule.task(ctx, ...info.args);
+      });
+      success = true;
+    } catch (err) {
+      success = false;
+      e = is.error(err) ? err : new Error(err);
+    }
 
-          const msg = `[Job#${id}] ${key} execute ${success ? 'succeed' : 'failed'}, used ${rt}ms.`;
-          logger[success ? 'info' : 'error'](msg, success ? '' : err);
+    const rt = Date.now() - start;
 
-          Object.assign(info, {
-            success,
-            workerId: process.pid,
-            rt,
-            message: err && err.message,
-          });
+    const msg = `[Job#${id}] ${key} execute ${success ? 'succeed' : 'failed'}, used ${rt}ms.`;
+    logger[success ? 'info' : 'error'](msg, success ? '' : err);
 
-          // notify agent job finish
-          app.messenger.sendToAgent('egg-schedule', info);
-        });
+    Object.assign(info, {
+      success,
+      workerId: process.pid,
+      rt,
+      message: e && e.message,
     });
+
+    // notify agent job finish
+    app.messenger.sendToAgent('egg-schedule', info);
   });
 
   // for test purpose

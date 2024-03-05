@@ -61,7 +61,7 @@ module.exports = app => {
     const rt = Date.now() - start;
 
     const msg = `[Job#${id}] ${key} execute ${success ? 'succeed' : 'failed'}, used ${rt}ms.`;
-    logger[success ? 'info' : 'error'](msg, success ? '' : err);
+    logger[success ? 'info' : 'error'](msg, success ? '' : e);
 
     Object.assign(info, {
       success,

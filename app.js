@@ -17,11 +17,10 @@ module.exports = app => {
 
   // register schedule event
   app.messenger.on('egg-schedule', async info => {
-    await app.ready();
-
     const { id, key } = info;
+    logger.debug(`[Job#${id}] ${key} await app ready`);
+    await app.ready();
     const schedule = scheduleWorker.scheduleItems[key];
-
     logger.debug(`[Job#${id}] ${key} task received by app`);
 
     if (!schedule) {

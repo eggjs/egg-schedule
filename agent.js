@@ -2,6 +2,7 @@
 
 const WorkerStrategy = require('./lib/strategy/worker');
 const AllStrategy = require('./lib/strategy/all');
+const Redis = require('ioredis');
 
 module.exports = agent => {
   // register built-in strategy
@@ -11,6 +12,12 @@ module.exports = agent => {
   // wait for other plugin to register custom strategy
   agent.beforeStart(() => {
     agent.schedule.init();
+    if (
+      agent.config.schedule?.cluster?.enable &&
+      agent.config.schedule?.cluster?.redis
+    ) {
+      agent.redisClient = new Redis(agent.config.schedule.cluster.redis);
+    }
   });
 
   // dispatch job finish event to strategy

@@ -37,7 +37,8 @@
     "egg-mock": "^5.3.0",
     "egg-tracer": "^1.1.0",
     "eslint": "^8.29.0",
-    "eslint-config-egg": "^12.1.0"
+    "eslint-config-egg": "^12.1.0",
+    "mocha": "^10.8.2"
   },
   "engines": {
     "node": ">=14.17.0"

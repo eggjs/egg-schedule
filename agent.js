@@ -2,6 +2,7 @@
 
 const WorkerStrategy = require('./lib/strategy/worker');
 const AllStrategy = require('./lib/strategy/all');
+const RedisLock = require('./lib/lock/redis_lock');
 
 module.exports = agent => {
   // register built-in strategy
@@ -11,6 +12,14 @@ module.exports = agent => {
   // wait for other plugin to register custom strategy
   agent.beforeStart(() => {
     agent.schedule.init();
+    if (agent?.config?.schedule?.cluster?.enable) {
+      if (
+        agent.config.schedule.cluster.lockType === 'redis' &&
+        agent.config.schedule.cluster.redis
+      ) {
+        agent.lockManager = new RedisLock(agent);
+      }
+    }
   });
 
   // dispatch job finish event to strategy

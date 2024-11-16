@@ -261,6 +261,24 @@ config.schedule = {
   directory: [
     path.join(__dirname, '../app/otherSchedule'),
   ],
+  // add it when making sure it only running in one cluster. 
+  cluster: {
+    enable: false, // default is false, true is for running
+    lockType: 'redis', //use redis as lock. reserve for other lock type
+    lockedTtl: 6000, // the automatic expired time for lock, avoid lock leak
+    // add redis for redis lock
+    redis: {
+      client: {
+        port: 6379, // Redis port
+        host: '127.0.0.1', // Redis host
+        password: 'auth',
+        db: 0,
+      },
+    },
+  },
+  // The final Redis key pattern will be: `${prefix}-${default}-${scheduleName}`
+  default: 'default', // default schedule name,like project-name.
+  prefix: 'schedule', // default schedule prefix
 };
 ```
 

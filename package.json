@@ -26,6 +26,7 @@
   "dependencies": {
     "cron-parser": "^2.16.3",
     "humanize-ms": "^1.2.1",
+    "ioredis": "^5.4.1",
     "is-type-of": "^1.2.1",
     "safe-timers": "^1.1.0",
     "utility": "^1.16.3"
@@ -36,7 +37,8 @@
     "egg-mock": "^5.3.0",
     "egg-tracer": "^1.1.0",
     "eslint": "^8.29.0",
-    "eslint-config-egg": "^12.1.0"
+    "eslint-config-egg": "^12.1.0",
+    "mocha": "^10.8.2"
   },
   "engines": {
     "node": ">=14.17.0"

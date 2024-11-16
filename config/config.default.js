@@ -15,6 +15,8 @@ module.exports = () => {
     directory: [],
     cluster: {
       enable: false,
+      lockType: 'redis',
+      lockedTtl: 60000,
       redis: {
         client: {
           port: 6379, // Redis port

@@ -263,7 +263,9 @@ config.schedule = {
   ],
   // add it when making sure it only running in one cluster. 
   cluster: {
-    enable: true,
+    enable: false, // default is false, true is for running
+    lockType: 'redis', //use redis as lock. reserve for other lock type
+    lockedTtl: 6000, // the automatic expired time for lock, avoid lock leak
     // add redis for redis lock
     redis: {
       client: {

@@ -276,7 +276,7 @@ config.schedule = {
       },
     },
   },
-  //the prefix for lockedKey for redis lock
+  // The final Redis key pattern will be: `${prefix}-${default}-${scheduleName}`
   default: 'default', // default schedule name,like project-name.
   prefix: 'schedule', // default schedule prefix
 };

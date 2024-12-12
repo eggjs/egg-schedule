@@ -34,7 +34,7 @@
     "@types/safe-timers": "^1.1.2",
     "egg": "beta",
     "egg-bin": "6",
-    "egg-mock": "5",
+    "egg-mock": "^5.15.1",
     "egg-tracer": "2",
     "eslint": "8",
     "eslint-config-egg": "14",

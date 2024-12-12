@@ -1,12 +1,10 @@
-'use strict';
-
-const ScheduleWorker = require('../../lib/schedule_worker');
+import { ScheduleWorker } from '../../lib/schedule_worker.js';
 
 const SCHEDULE_WORKER = Symbol('application#scheduleWorker');
 
-module.exports = {
+export default {
   /**
-   * @member agent#schedule
+   * @member app#schedule
    */
   get scheduleWorker() {
     if (!this[SCHEDULE_WORKER]) {
@@ -14,4 +12,5 @@ module.exports = {
     }
     return this[SCHEDULE_WORKER];
   },
-};
+} as any;
+

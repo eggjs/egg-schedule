@@ -1,7 +1,5 @@
-'use strict';
-
-module.exports = () => {
-  const config = {};
+export default () => {
+  const config = {} as Record<string, any>;
 
   config.customLogger = {
     scheduleLogger: {

@@ -1,4 +1,4 @@
-# egg-schedule
+# @eggjs/schedule
 
 [![NPM version][npm-image]][npm-url]
 [![Node.js CI](https://github.com/eggjs/egg-schedule/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/egg-schedule/actions/workflows/nodejs.yml)
@@ -6,14 +6,14 @@
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 
-[npm-image]: https://img.shields.io/npm/v/egg-schedule.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/egg-schedule
+[npm-image]: https://img.shields.io/npm/v/@eggjs/schedule.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/schedule
 [codecov-image]: https://codecov.io/github/eggjs/egg-schedule/coverage.svg?branch=master
 [codecov-url]: https://codecov.io/github/eggjs/egg-schedule?branch=master
 [snyk-image]: https://snyk.io/test/npm/egg-schedule/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/egg-schedule
-[download-image]: https://img.shields.io/npm/dm/egg-schedule.svg?style=flat-square
-[download-url]: https://npmjs.org/package/egg-schedule
+[snyk-url]: https://snyk.io/test/npm/@eggjs/schedule
+[download-image]: https://img.shields.io/npm/dm/@eggjs/schedule.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/schedule
 
 A schedule plugin for egg, has been built-in plugin for egg enabled by default.
 
@@ -21,13 +21,13 @@ It's fully extendable for a developer and provides a simple built-in TimerStrate
 
 ## Usage
 
-Just add your job file to `{app_root}/app/schedule`.
+Just add your job file to `{baseDir}/app/schedule`.
 
-```js
-// {app_root}/app/schedule/cleandb.js
-const Subscription = require('egg').Subscription;
+```ts
+// {baseDir}/app/schedule/cleandb.ts
+import { Subscription } from 'egg';
 
-class CleanDB extends Subscription {
+export default class CleanDB extends Subscription {
   /**
    * @property {Object} schedule
    *  - {String} type - schedule type, `worker` or `all` or your custom types.
@@ -51,28 +51,28 @@ class CleanDB extends Subscription {
     await this.ctx.service.db.cleandb();
   }
 }
-
-module.exports = CleanDB;
 ```
 
-You can also use function simply like: 
+You can also use function simply like:
 
-```js
-exports.schedule = {
+```ts
+import { EggContext } from 'egg';
+
+export const schedule = {
   type: 'worker',
   cron: '0 0 3 * * *',
   // interval: '1h',
   // immediate: true,
-};
+}
 
-exports.task = async function (ctx) {
+export async function task(ctx: EggContext) {
   await ctx.service.db.cleandb();
-};
+}
 ```
 
 ## Overview
 
-`egg-schedule` supports both cron-based scheduling and interval-based scheduling.
+`@eggjs/schedule` supports both cron-based scheduling and interval-based scheduling.
 
 Schedule decision is being made by `agent` process. `agent` triggers a task and sends a message to `worker` process. Then, one or all `worker` process(es) execute the task based on schedule type.
 
@@ -91,21 +91,23 @@ You can get anonymous context with `this.ctx`.
 
 To create a task, `subscribe` can be a generator function or async function. For example:
 
-```js
+```ts
 // A simple logger example
-const Subscription = require('egg').Subscription;
-class LoggerExample extends Subscription {
+import { Subscription } from 'egg';
+
+export default class LoggerExample extends Subscription {
   async subscribe() {
     this.ctx.logger.info('Info about your task');
   }
 }
 ```
 
-```js
+```ts
 // A real world example: wipe out your database.
 // Use it with caution. :)
-const Subscription = require('egg').Subscription;
-class CleanDB extends Subscription {
+import { Subscription } from 'egg';
+
+export default class CleanDB extends Subscription {
   async subscribe() {
     await this.ctx.service.db.cleandb();
   }
@@ -138,14 +140,14 @@ Use [cron-parser](https://github.com/harrisiirak/cron-parser).
 
 Example:
 
-```js
+```ts
 // To execute task every 3 hours
-exports.schedule = {
+export const schedule = {
   type: 'worker',
   cron: '0 0 */3 * * *',
   cronOptions: {
     // tz: 'Europe/Athens',
-  }
+  },
 };
 ```
 
@@ -155,9 +157,9 @@ To use `setInterval`, and support [ms](https://www.npmjs.com/package/ms) convers
 
 Example:
 
-```js
+```ts
 // To execute task every 3 hours
-exports.schedule = {
+export const schedule = {
   type: 'worker',
   interval: '3h',
 };
@@ -175,11 +177,15 @@ exports.schedule = {
 **Custom schedule:**
 
 To create a custom schedule, simply extend `agent.ScheduleStrategy` and register it by `agent.schedule.use(type, clz)`.
-You can schedule the task to be executed by one random worker or all workers with the built-in method `this.sendOne(...args)` or `this.sendAll(...args)` which support params, it will pass to `subscribe(...args)` or `task(ctx, ...args)`.
+You can schedule the task to be executed by one random worker or all workers with
+the built-in method `this.sendOne(...args)` or `this.sendAll(...args)` which support params,
+it will pass to `subscribe(...args)` or `task(ctx, ...args)`.
 
-```js
-// {app_root}/agent.js
-module.exports = function(agent) {
+```ts
+// {baseDir}/agent.ts
+import { Agent } from 'egg';
+
+export default (agent: Agent) => {
   class CustomStrategy extends agent.ScheduleStrategy {
     start() {
       // such as mq / redis subscribe
@@ -188,34 +194,38 @@ module.exports = function(agent) {
       });
     }
   }
+
   agent.schedule.use('custom', CustomStrategy);
-};
+}
 ```
 
 Then you could use it to defined your job:
 
-```js
-// {app_root}/app/schedule/other.js
-const Subscription = require('egg').Subscription;
-class ClusterTask extends Subscription {
+```ts
+// {baseDir}/app/schedule/other.ts
+import { Subscription } from 'egg';
+
+export default class ClusterTask extends Subscription {
   static get schedule() {
     return {
       type: 'custom',
     };
   }
+
   async subscribe(data) {
     console.log('got custom data:', data);
     await this.ctx.service.someTask.run();
   }
 }
-module.exports = ClusterTask;
 ```
 
 ## Dynamic schedule
 
-```js
-// {app_root}/app/schedule/sync.js
-module.exports = app => {
+```ts
+// {baseDir}/app/schedule/sync.ts
+import { Application } from 'egg';
+
+export default (app: Application) => {
   class SyncTask extends app.Subscription {
     static get schedule() {
       return {
@@ -227,10 +237,12 @@ module.exports = app => {
         env: [ 'prod' ],
       };
     }
+
     async subscribe() {
       await this.ctx.sync();
     }
   }
+
   return SyncTask;
 }
 ```
@@ -239,39 +251,47 @@ module.exports = app => {
 
 ### Logging
 
-See `${appInfo.root}/logs/{app_name}/egg-schedule.log` which provided by [config.customLogger.scheduleLogger](https://github.com/eggjs/egg-schedule/blob/master/config/config.default.js).
+See `${appInfo.root}/logs/{app_name}/egg-schedule.log` which provided by [config.customLogger.scheduleLogger](https://github.com/eggjs/egg-schedule/blob/master/config/config.default.ts).
 
-```js
-// config/config.default.js
-config.customLogger = {
-  scheduleLogger: {
-    // consoleLevel: 'NONE',
-    // file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
+```ts
+// config/config.default.ts
+import { EggAppConfig } from 'egg';
+
+export default const config = {
+  customLogger: {
+    scheduleLogger: {
+      // consoleLevel: 'NONE',
+      // file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
+    },
   },
-};
+} as Partial<EggAppConfig>;
 ```
 
 ### Customize directory
 
 If you want to add additional schedule directories, you can use this config.
 
-```js
-// config/config.default.js
-config.schedule = {
-  directory: [
-    path.join(__dirname, '../app/otherSchedule'),
-  ],
-};
+```ts
+// config/config.default.ts
+import { EggAppConfig } from 'egg';
+
+export default const config = {
+  schedule: {
+    directory: [
+      'path/to/otherSchedule',
+    ],
+  },
+} as Partial<EggAppConfig>;
 ```
 
 ## Testing
 
-`app.runSchedule(scheduleName)` is provided by `egg-schedule` plugin only for test purpose.
+`app.runSchedule(scheduleName)` is provided by `@eggjs/schedule` plugin only for test purpose.
 
 Example:
 
-```js
-it('test a schedule task', async function () {
+```ts
+it('test a schedule task', async () => {
   // get app instance
   await app.runSchedule('clean_cache');
 });
@@ -284,3 +304,9 @@ Please open an issue [here](https://github.com/eggjs/egg/issues).
 ## License
 
 [MIT](https://github.com/eggjs/egg-schedule/blob/master/LICENSE)
+
+## Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg-schedule)](https://github.com/eggjs/egg-schedule/graphs/contributors)
+
+Made with [contributors-img](https://contrib.rocks).

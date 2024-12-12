@@ -1,16 +1,14 @@
-'use strict';
-
-const Strategy = require('../../lib/strategy/base');
-const TimerStrategy = require('../../lib/strategy/timer');
-const Schedule = require('../../lib/schedule');
+import { BaseStrategy } from '../../lib/strategy/base.js';
+import { TimerStrategy } from '../../lib/strategy/timer.js';
+import { Schedule } from '../../lib/schedule.js';
 
 const SCHEDULE = Symbol('agent#schedule');
 
-module.exports = {
+export default {
   /**
    * @member agent#ScheduleStrategy
    */
-  ScheduleStrategy: Strategy,
+  ScheduleStrategy: BaseStrategy,
 
   /**
    * @member agent#TimerScheduleStrategy
@@ -29,4 +27,4 @@ module.exports = {
     }
     return this[SCHEDULE];
   },
-};
+} as any;

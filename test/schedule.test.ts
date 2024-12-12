@@ -1,17 +1,12 @@
-const mm = require('egg-mock');
-const path = require('path');
-const fs = require('fs');
-const assert = require('assert');
-const is = require('is-type-of');
+import { strict as assert } from 'node:assert';
+import path from 'node:path';
+import fs from 'node:fs';
+import { setTimeout as sleep } from 'node:timers/promises';
+import is from 'is-type-of';
+import mm, { MockApplication } from 'egg-mock';
 
-function sleep(ms) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-}
-
-describe('test/schedule.test.js', () => {
-  let app;
+describe('test/schedule.test.ts', () => {
+  let app: MockApplication;
   afterEach(() => app.close());
 
   describe('schedule type worker', () => {

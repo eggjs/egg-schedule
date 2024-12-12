@@ -1,26 +1,41 @@
-'use strict';
+import type { Agent, EggLogger } from 'egg';
+import type { ScheduleConfig, ScheduleJobInfo } from '../types.js';
 
-module.exports = class BaseStrategy {
-  constructor(schedule, agent, key) {
+export class BaseStrategy {
+  protected agent: Agent;
+  protected scheduleConfig: ScheduleConfig;
+  protected key: string;
+  protected logger: EggLogger;
+  protected closed = false;
+  count = 0;
+
+  constructor(scheduleConfig: ScheduleConfig, agent: Agent, key: string) {
     this.agent = agent;
     this.key = key;
-    this.schedule = schedule;
+    this.scheduleConfig = scheduleConfig;
     this.logger = this.agent.getLogger('scheduleLogger');
-    this.count = 0;
   }
 
-  start() {}
+  start() {
+    throw new TypeError(`[egg-schedule] ${this.key} strategy should override \`start()\` method`);
+  }
 
-  onJobStart() {}
+  close() {
+    this.closed = true;
+  }
 
-  onJobFinish() {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onJobStart(_info: ScheduleJobInfo) {}
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onJobFinish(_info: ScheduleJobInfo) {}
 
   /**
    * trigger one worker
    *
    * @param {...any} args - pass to job task
    */
-  sendOne(...args) {
+  sendOne(...args: any[]) {
     /* istanbul ignore next */
     if (this.agent.schedule.closed) {
       this.logger.warn(`${this.key} skip due to schedule closed`);
@@ -33,7 +48,7 @@ module.exports = class BaseStrategy {
       key: this.key,
       id: this.getSeqId(),
       args,
-    };
+    } as ScheduleJobInfo;
 
     this.logger.debug(`[Job#${info.id}] ${info.key} triggered, send random by agent`);
     this.agent.messenger.sendRandom('egg-schedule', info);
@@ -45,7 +60,7 @@ module.exports = class BaseStrategy {
    *
    * @param {...any} args - pass to job task
    */
-  sendAll(...args) {
+  sendAll(...args: any[]) {
     /* istanbul ignore next */
     if (this.agent.schedule.closed) {
       this.logger.warn(`${this.key} skip due to schedule closed`);
@@ -58,8 +73,9 @@ module.exports = class BaseStrategy {
       key: this.key,
       id: this.getSeqId(),
       args,
-    };
+    } as ScheduleJobInfo;
     this.logger.debug(`[Job#${info.id}] ${info.key} triggered, send all by agent`);
+    // send to all workers
     this.agent.messenger.send('egg-schedule', info);
     this.onJobStart(info);
   }
@@ -67,4 +83,4 @@ module.exports = class BaseStrategy {
   getSeqId() {
     return `${Date.now()}${process.hrtime().join('')}${this.count}`;
   }
-};
+}

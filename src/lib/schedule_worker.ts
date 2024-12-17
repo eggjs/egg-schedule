@@ -1,10 +1,10 @@
 import type { Application } from 'egg';
 import { loadSchedule } from './load_schedule.js';
-import type { ScheduleItem } from './types.js';
+import type { EggScheduleItem } from './types.js';
 
 export class ScheduleWorker {
   #app: Application;
-  scheduleItems: Record<string, ScheduleItem> = {};
+  scheduleItems: Record<string, EggScheduleItem> = {};
 
   constructor(app: Application) {
     this.#app = app;
@@ -14,7 +14,7 @@ export class ScheduleWorker {
     this.scheduleItems = await loadSchedule(this.#app);
   }
 
-  registerSchedule(scheduleItem: ScheduleItem) {
+  registerSchedule(scheduleItem: EggScheduleItem) {
     this.scheduleItems[scheduleItem.key] = scheduleItem;
   }
 

@@ -3,22 +3,22 @@ import assert from 'node:assert';
 import { stringify } from 'node:querystring';
 import { isClass, isFunction, isGeneratorFunction } from 'is-type-of';
 import type { EggApplicationCore, EggContext } from 'egg';
-import type { ScheduleConfig, ScheduleTask, ScheduleItem } from './types.js';
+import type { EggScheduleConfig, EggScheduleTask, EggScheduleItem } from './types.js';
 
 function getScheduleLoader(app: EggApplicationCore) {
   return class ScheduleLoader extends app.loader.FileLoader {
     async load() {
-      const target = this.options.target as Record<string, ScheduleItem>;
+      const target = this.options.target as Record<string, EggScheduleItem>;
       const items = await this.parse();
       for (const item of items) {
-        const schedule = item.exports as { schedule: ScheduleConfig, task: ScheduleTask };
+        const schedule = item.exports as { schedule: EggScheduleConfig, task: EggScheduleTask };
         const fullpath = item.fullpath;
         const scheduleConfig = schedule.schedule;
         assert(scheduleConfig, `schedule(${fullpath}): must have "schedule" and "task" properties`);
         assert(isClass(schedule) || isFunction(schedule.task),
           `schedule(${fullpath}: \`schedule.task\` should be function or \`schedule\` should be class`);
 
-        let task: ScheduleTask;
+        let task: EggScheduleTask;
         if (isClass(schedule)) {
           assert(!isGeneratorFunction(schedule.prototype.subscribe),
             `schedule(${fullpath}): "schedule" generator function is not support, should use async function instead`);
@@ -62,7 +62,7 @@ export async function loadSchedule(app: EggApplicationCore) {
   ];
 
   const Loader = getScheduleLoader(app);
-  const schedules = {} as Record<string, ScheduleItem>;
+  const schedules = {} as Record<string, EggScheduleItem>;
   await new Loader({
     directory: dirs,
     target: schedules,

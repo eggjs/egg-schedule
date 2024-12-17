@@ -4,13 +4,13 @@ import { ms } from 'humanize-ms';
 import safeTimers from 'safe-timers';
 import { logDate } from 'utility';
 import type { Agent } from 'egg';
-import type { ScheduleConfig } from '../types.js';
+import type { EggScheduleConfig } from '../types.js';
 import { BaseStrategy } from './base.js';
 
 export abstract class TimerStrategy extends BaseStrategy {
   protected cronInstance?: CronExpression;
 
-  constructor(scheduleConfig: ScheduleConfig, agent: Agent, key: string) {
+  constructor(scheduleConfig: EggScheduleConfig, agent: Agent, key: string) {
     super(scheduleConfig, agent, key);
 
     const { interval, cron, cronOptions, immediate } = this.scheduleConfig;

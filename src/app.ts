@@ -4,7 +4,7 @@ import type {
   Application, ILifecycleBoot, EggLogger,
 } from 'egg';
 import { importResolve } from '@eggjs/utils';
-import { ScheduleItem, ScheduleJobInfo } from './lib/types.js';
+import { EggScheduleItem, EggScheduleJobInfo } from './lib/types.js';
 
 const debug = debuglog('@eggjs/schedule/app');
 
@@ -87,7 +87,7 @@ export default class Boot implements ILifecycleBoot {
         workerId: process.pid,
         rt,
         message: e?.message,
-      } as ScheduleJobInfo);
+      } as EggScheduleJobInfo);
     });
 
     // for test purpose
@@ -115,7 +115,7 @@ export default class Boot implements ILifecycleBoot {
       }
 
       debug('[runSchedule] resolve schedulePath: %o', schedulePath);
-      let schedule: ScheduleItem;
+      let schedule: EggScheduleItem;
       try {
         schedule = scheduleWorker.scheduleItems[schedulePath];
         if (!schedule) {

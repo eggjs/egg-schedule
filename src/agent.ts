@@ -2,7 +2,7 @@ import { debuglog } from 'node:util';
 import type { Agent, ILifecycleBoot } from 'egg';
 import { WorkerStrategy } from './lib/strategy/worker.js';
 import { AllStrategy } from './lib/strategy/all.js';
-import { ScheduleJobInfo } from './lib/types.js';
+import { EggScheduleJobInfo } from './lib/types.js';
 
 const debug = debuglog('@eggjs/schedule/agent');
 
@@ -21,7 +21,7 @@ export default class Boot implements ILifecycleBoot {
     await this.#agent.schedule.init();
 
     // dispatch job finish event to strategy
-    this.#agent.messenger.on('egg-schedule', (info: ScheduleJobInfo) => {
+    this.#agent.messenger.on('egg-schedule', (info: EggScheduleJobInfo) => {
       // get job info from worker
       this.#agent.schedule.onJobFinish(info);
     });

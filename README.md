@@ -258,7 +258,7 @@ See `${appInfo.root}/logs/{app_name}/egg-schedule.log` which provided by [config
 // config/config.default.ts
 import { EggAppConfig } from 'egg';
 
-export default const config = {
+export default {
   customLogger: {
     scheduleLogger: {
       // consoleLevel: 'NONE',
@@ -276,7 +276,7 @@ If you want to add additional schedule directories, you can use this config.
 // config/config.default.ts
 import { EggAppConfig } from 'egg';
 
-export default const config = {
+export default {
   schedule: {
     directory: [
       'path/to/otherSchedule',

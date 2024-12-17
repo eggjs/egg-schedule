@@ -1,7 +1,7 @@
 import { debuglog } from 'node:util';
 import type { Agent, EggLogger } from 'egg';
 import { loadSchedule } from './load_schedule.js';
-import type { ScheduleItem, ScheduleJobInfo } from './types.js';
+import type { EggScheduleItem, EggScheduleJobInfo } from './types.js';
 import type { BaseStrategy } from './strategy/base.js';
 
 const debug = debuglog('@eggjs/schedule/lib/schedule');
@@ -39,7 +39,7 @@ export class Schedule {
     }
   }
 
-  registerSchedule(scheduleItem: ScheduleItem) {
+  registerSchedule(scheduleItem: EggScheduleItem) {
     const { key, schedule } = scheduleItem;
     const type = schedule.type;
     if (schedule.disable) {
@@ -70,7 +70,7 @@ export class Schedule {
    *
    * @param {Object} info - { id, key, success, message, workerId }
    */
-  onJobFinish(info: ScheduleJobInfo) {
+  onJobFinish(info: EggScheduleJobInfo) {
     this.#logger.debug(`[Job#${info.id}] ${info.key} finish event received by agent from worker#${info.workerId}`);
     const instance = this.#strategyInstanceMap.get(info.key);
     /* istanbul ignore else */

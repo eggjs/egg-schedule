@@ -1,15 +1,15 @@
 import type { Agent, EggLogger } from 'egg';
-import type { ScheduleConfig, ScheduleJobInfo } from '../types.js';
+import type { EggScheduleConfig, EggScheduleJobInfo } from '../types.js';
 
 export class BaseStrategy {
   protected agent: Agent;
-  protected scheduleConfig: ScheduleConfig;
+  protected scheduleConfig: EggScheduleConfig;
   protected key: string;
   protected logger: EggLogger;
   protected closed = false;
   count = 0;
 
-  constructor(scheduleConfig: ScheduleConfig, agent: Agent, key: string) {
+  constructor(scheduleConfig: EggScheduleConfig, agent: Agent, key: string) {
     this.agent = agent;
     this.key = key;
     this.scheduleConfig = scheduleConfig;
@@ -17,7 +17,7 @@ export class BaseStrategy {
   }
 
   /** keep compatibility */
-  get schedule(): ScheduleConfig {
+  get schedule(): EggScheduleConfig {
     return this.scheduleConfig;
   }
 
@@ -30,10 +30,10 @@ export class BaseStrategy {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onJobStart(_info: ScheduleJobInfo) {}
+  onJobStart(_info: EggScheduleJobInfo) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onJobFinish(_info: ScheduleJobInfo) {}
+  onJobFinish(_info: EggScheduleJobInfo) {}
 
   /**
    * trigger one worker
@@ -53,7 +53,7 @@ export class BaseStrategy {
       key: this.key,
       id: this.getSeqId(),
       args,
-    } as ScheduleJobInfo;
+    } as EggScheduleJobInfo;
 
     this.logger.info(`[Job#${info.id}] ${info.key} triggered, send random by agent`);
     this.agent.messenger.sendRandom('egg-schedule', info);
@@ -78,7 +78,7 @@ export class BaseStrategy {
       key: this.key,
       id: this.getSeqId(),
       args,
-    } as ScheduleJobInfo;
+    } as EggScheduleJobInfo;
     this.logger.info(`[Job#${info.id}] ${info.key} triggered, send all by agent`);
     // send to all workers
     this.agent.messenger.send('egg-schedule', info);

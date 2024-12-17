@@ -6,7 +6,7 @@ import type { ScheduleWorker } from './schedule_worker.js';
  * Schedule Config
  * @see https://www.eggjs.org/zh-CN/basics/schedule
  */
-export interface ScheduleConfig {
+export interface EggScheduleConfig {
   type?: 'worker' | 'all';
   interval?: string | number;
   cron?: string;
@@ -16,16 +16,16 @@ export interface ScheduleConfig {
   env?: string[];
 }
 
-export type ScheduleTask = (ctx: any, ...args: any[]) => Promise<void>;
+export type EggScheduleTask = (ctx: any, ...args: any[]) => Promise<void>;
 
-export interface ScheduleItem {
-  schedule: ScheduleConfig;
+export interface EggScheduleItem {
+  schedule: EggScheduleConfig;
   scheduleQueryString: string;
-  task: ScheduleTask;
+  task: EggScheduleTask;
   key: string;
 }
 
-export interface ScheduleJobInfo {
+export interface EggScheduleJobInfo {
   id: string;
   key: string;
   workerId: number;
@@ -36,15 +36,23 @@ export interface ScheduleJobInfo {
 }
 
 declare module 'egg' {
-  export interface ScheduleAgent {
+  export interface EggScheduleAgent {
     schedule: Schedule;
   }
-  export interface Agent extends ScheduleAgent {}
+  export interface Agent extends EggScheduleAgent {}
 
-  export interface ScheduleApplication {
+  export interface EggScheduleApplication {
     scheduleWorker: ScheduleWorker;
     /** runSchedule in unittest */
     runSchedule: (schedulePath: string, ...args: any[]) => Promise<void>;
   }
-  export interface Application extends ScheduleApplication {}
+  export interface Application extends EggScheduleApplication {}
+
+  export interface EggScheduleAppConfig {
+    schedule: {
+      directory: string[];
+    };
+  }
+
+  export interface EggAppConfig extends EggScheduleAppConfig {}
 }

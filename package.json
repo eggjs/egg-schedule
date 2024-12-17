@@ -1,6 +1,9 @@
 {
   "name": "@eggjs/schedule",
   "version": "4.0.1",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18.19.0"
   },

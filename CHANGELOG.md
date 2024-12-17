@@ -1,5 +1,48 @@
 # Changelog
 
+## [5.0.0](https://github.com/eggjs/egg-schedule/compare/v4.0.1...v5.0.0) (2024-12-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node.js < 18.19.0 support
+
+part of https://github.com/eggjs/egg/issues/3644
+
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai
+-->
+## Summary by CodeRabbit
+
+- **New Features**
+- Introduced a new `Boot` class for managing agent lifecycle and
+scheduling.
+- Added `Schedule` and `ScheduleWorker` classes for managing scheduled
+tasks.
+- Implemented `AllStrategy` and `WorkerStrategy` classes for scheduling
+strategies.
+- Added TypeScript support with updated interfaces and types for
+scheduling functionality.
+
+- **Bug Fixes**
+- Updated changelog to reflect a bug fix ensuring schedules execute
+after the application is ready.
+
+- **Documentation**
+	- Updated `README.md` to reflect package renaming and TypeScript usage.
+	- Enhanced documentation with new sections and improved formatting.
+
+- **Chores**
+- Removed outdated files and configurations related to previous
+implementations.
+- Transitioned project to TypeScript with updated configurations and
+module syntax.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
+
+### Features
+
+* support cjs and esm both by tshy ([#62](https://github.com/eggjs/egg-schedule/issues/62)) ([04742eb](https://github.com/eggjs/egg-schedule/commit/04742eb2bdb8ff995029bdf912fc7c5de9a9dca8))
+
 ## [4.0.1](https://github.com/eggjs/egg-schedule/compare/v4.0.0...v4.0.1) (2024-03-06)
 
 

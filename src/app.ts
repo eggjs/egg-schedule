@@ -14,7 +14,7 @@ export default class Boot implements ILifecycleBoot {
     this.#logger = app.getLogger('scheduleLogger');
   }
 
-  async didLoad(): Promise<void> {
+  async configDidLoad(): Promise<void> {
     const scheduleWorker = this.#app.scheduleWorker;
     await scheduleWorker.init();
 
@@ -87,6 +87,6 @@ export default class Boot implements ILifecycleBoot {
         message: e?.message,
       } as EggScheduleJobInfo);
     });
-    debug('didLoad');
+    debug('configDidLoad');
   }
 }

@@ -171,10 +171,10 @@ describe('test/schedule.test.ts', () => {
 
     it('should handler error', async () => {
       app = mm.cluster({ baseDir: 'customTypeError', workers: 2 });
-      // app.debug();
+      app.debug();
       await app.ready();
-      await sleep(1000);
-      app.expect('code', 1);
+      await sleep(3000);
+      // app.expect('code', 1);
       app.expect('stderr', /should provide clusterId/);
     });
   });

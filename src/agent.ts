@@ -12,7 +12,7 @@ export default class Boot implements ILifecycleBoot {
     this.#agent = agent;
   }
 
-  async didLoad(): Promise<void> {
+  async configDidLoad(): Promise<void> {
     // register built-in strategy
     this.#agent.schedule.use('worker', WorkerStrategy);
     this.#agent.schedule.use('all', AllStrategy);
@@ -25,7 +25,7 @@ export default class Boot implements ILifecycleBoot {
       // get job info from worker
       this.#agent.schedule.onJobFinish(info);
     });
-    debug('didLoad');
+    debug('configDidLoad');
   }
 
   async serverDidReady(): Promise<void> {

@@ -1,10 +1,8 @@
 import { debuglog } from 'node:util';
-import path from 'node:path';
 import type {
   Application, ILifecycleBoot, EggLogger,
 } from 'egg';
-import { importResolve } from '@eggjs/utils';
-import { EggScheduleItem, EggScheduleJobInfo } from './lib/types.js';
+import type { EggScheduleJobInfo } from './lib/types.js';
 
 const debug = debuglog('@eggjs/schedule/app');
 
@@ -16,7 +14,7 @@ export default class Boot implements ILifecycleBoot {
     this.#logger = app.getLogger('scheduleLogger');
   }
 
-  async didLoad(): Promise<void> {
+  async configDidLoad(): Promise<void> {
     const scheduleWorker = this.#app.scheduleWorker;
     await scheduleWorker.init();
 
@@ -89,54 +87,6 @@ export default class Boot implements ILifecycleBoot {
         message: e?.message,
       } as EggScheduleJobInfo);
     });
-
-    // for test purpose
-    const config = this.#app.config;
-    const directory = [
-      path.join(config.baseDir, 'app/schedule'),
-      ...config.schedule.directory,
-    ];
-    const runSchedule = async (schedulePath: string, ...args: any[]) => {
-      debug('[runSchedule] start schedulePath: %o, args: %o', schedulePath, args);
-
-      // resolve real path
-      if (path.isAbsolute(schedulePath)) {
-        schedulePath = importResolve(schedulePath);
-      } else {
-        for (const dir of directory) {
-          const trySchedulePath = path.join(dir, schedulePath);
-          try {
-            schedulePath = importResolve(trySchedulePath);
-            break;
-          } catch (err) {
-            debug('[runSchedule] importResolve %o error: %s', trySchedulePath, err);
-          }
-        }
-      }
-
-      debug('[runSchedule] resolve schedulePath: %o', schedulePath);
-      let schedule: EggScheduleItem;
-      try {
-        schedule = scheduleWorker.scheduleItems[schedulePath];
-        if (!schedule) {
-          throw new Error(`Cannot find schedule ${schedulePath}`);
-        }
-      } catch (err: any) {
-        err.message = `[@eggjs/schedule] ${err.message}`;
-        throw err;
-      }
-
-      // run with anonymous context
-      const ctx = this.#app.createAnonymousContext({
-        method: 'SCHEDULE',
-        url: `/__schedule?path=${schedulePath}&${schedule.scheduleQueryString}`,
-      });
-      return await this.#app.ctxStorage.run(ctx, async () => {
-        return await schedule.task(ctx, ...args);
-      });
-    };
-    Reflect.set(this.#app, 'runSchedule', runSchedule);
-
-    debug('didLoad');
+    debug('configDidLoad');
   }
 }

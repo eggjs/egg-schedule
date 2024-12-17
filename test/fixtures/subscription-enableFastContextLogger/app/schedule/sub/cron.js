@@ -8,7 +8,7 @@ class Interval extends Subscription {
     };
   }
 
-  * subscribe() {
+  async subscribe() {
     this.app.logger.info('cron');
   }
 }

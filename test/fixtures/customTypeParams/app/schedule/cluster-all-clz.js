@@ -10,7 +10,7 @@ class Interval extends Subscription {
     };
   }
 
-  * subscribe(data) {
+  async subscribe(data) {
     this.ctx.logger.info('cluster_all_log_clz', data);
   }
 }

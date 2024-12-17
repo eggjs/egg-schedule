@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = function(agent) {
   class ClusterStrategy extends agent.ScheduleStrategy {
     constructor(...args) {

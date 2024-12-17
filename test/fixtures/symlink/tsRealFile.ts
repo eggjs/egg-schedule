@@ -1,8 +1,8 @@
-exports.schedule = {
+export const schedule = {
   type: 'worker',
   interval: '4s',
 };
 
-exports.task = async function (ctx) {
+export async function task(ctx) {
   ctx.logger.info('interval');
-};
+}

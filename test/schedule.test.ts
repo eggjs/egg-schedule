@@ -373,6 +373,10 @@ describe('test/schedule.test.ts', () => {
     });
 
     it('should run schedule with symlink js file success', async () => {
+      if (!process.version.startsWith('v22.')) {
+        // only work on Node.js >= v22
+        return;
+      }
       const realPath = path.join(__dirname, 'fixtures/symlink/realFile.js');
       const targetPath = path.join(__dirname, 'fixtures/symlink/runDir/app/schedule/realFile.js');
       try {

@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.1](https://github.com/eggjs/egg-schedule/compare/v5.0.0...v5.0.1) (2024-12-17)
+
+
+### Bug Fixes
+
+* patch runSchedule on application.unittest.ts ([#63](https://github.com/eggjs/egg-schedule/issues/63)) ([cc9488c](https://github.com/eggjs/egg-schedule/commit/cc9488c12c64fac2962825b58537445bb91489a8))
+
 ## [5.0.0](https://github.com/eggjs/egg-schedule/compare/v4.0.1...v5.0.0) (2024-12-17)
 
 

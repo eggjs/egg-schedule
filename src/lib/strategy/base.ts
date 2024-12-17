@@ -16,8 +16,13 @@ export class BaseStrategy {
     this.logger = this.agent.getLogger('scheduleLogger');
   }
 
+  /** keep compatibility */
+  get schedule(): ScheduleConfig {
+    return this.scheduleConfig;
+  }
+
   start() {
-    throw new TypeError(`[egg-schedule] ${this.key} strategy should override \`start()\` method`);
+    // empty loop by default
   }
 
   close() {
@@ -50,7 +55,7 @@ export class BaseStrategy {
       args,
     } as ScheduleJobInfo;
 
-    this.logger.debug(`[Job#${info.id}] ${info.key} triggered, send random by agent`);
+    this.logger.info(`[Job#${info.id}] ${info.key} triggered, send random by agent`);
     this.agent.messenger.sendRandom('egg-schedule', info);
     this.onJobStart(info);
   }
@@ -74,7 +79,7 @@ export class BaseStrategy {
       id: this.getSeqId(),
       args,
     } as ScheduleJobInfo;
-    this.logger.debug(`[Job#${info.id}] ${info.key} triggered, send all by agent`);
+    this.logger.info(`[Job#${info.id}] ${info.key} triggered, send all by agent`);
     // send to all workers
     this.agent.messenger.send('egg-schedule', info);
     this.onJobStart(info);

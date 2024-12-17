@@ -6,7 +6,11 @@
   },
   "description": "schedule plugin for egg, support corn job.",
   "eggPlugin": {
-    "name": "schedule"
+    "name": "schedule",
+    "exports": {
+      "import": "./dist/esm",
+      "require": "./dist/commonjs"
+    }
   },
   "repository": {
     "type": "git",
@@ -34,7 +38,7 @@
     "@types/safe-timers": "^1.1.2",
     "egg": "beta",
     "egg-bin": "6",
-    "egg-mock": "^5.15.1",
+    "egg-mock": "beta",
     "egg-tracer": "2",
     "eslint": "8",
     "eslint-config-egg": "14",
@@ -44,8 +48,10 @@
   },
   "scripts": {
     "lint": "eslint --cache src test --ext .ts",
-    "test": "npm run lint -- --fix && egg-bin test",
-    "ci": "npm run lint && egg-bin cov && npm run prepublishOnly && attw --pack",
+    "pretest": "npm run lint -- --fix && npm run prepublishOnly",
+    "test": "egg-bin test",
+    "preci": "npm run lint && npm run prepublishOnly",
+    "ci": "egg-bin cov && attw --pack",
     "prepublishOnly": "tshy && tshy-after"
   },
   "author": "dead_horse",

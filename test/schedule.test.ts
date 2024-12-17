@@ -1,11 +1,13 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { MockApplication } from 'egg-mock';
-import _mm from 'egg-mock';
+import { mm } from 'egg-mock';
 
-const mm = _mm.default;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('test/schedule.test.ts', () => {
   let app: MockApplication;
@@ -14,19 +16,20 @@ describe('test/schedule.test.ts', () => {
   describe('schedule type worker', () => {
     it.only('should support interval and cron', async () => {
       app = mm.cluster({ baseDir: 'worker', workers: 2, cache: false });
-      // app.debug();
+      app.debug();
       await app.ready();
       await sleep(5000);
       const log = getLogContent('worker');
-      // console.log(log);
-      assert(contains(log, 'interval') === 1);
-      assert(contains(log, 'cron') === 1);
+      console.log(log);
+      assert.equal(contains(log, 'interval'), 1);
+      assert.equal(contains(log, 'cron'), 1);
 
       const scheduleLog = getScheduleLogContent('worker');
-      assert(contains(scheduleLog, 'cron.js executing by app') === 1);
-      assert(contains(scheduleLog, 'cron.js execute succeed') === 1);
-      assert(contains(scheduleLog, 'interval.js executing by app') === 1);
-      assert(contains(scheduleLog, 'interval.js execute succeed') === 1);
+      console.log(scheduleLog);
+      assert.equal(contains(scheduleLog, 'cron.js executing by app'), 1);
+      assert.equal(contains(scheduleLog, 'cron.js execute succeed'), 1);
+      assert.equal(contains(scheduleLog, 'interval.js executing by app'), 1);
+      assert.equal(contains(scheduleLog, 'interval.js execute succeed'), 1);
     });
 
     it('should support ctxStorage', async () => {
@@ -177,7 +180,7 @@ describe('test/schedule.test.ts', () => {
       await sleep(5000);
       const log = getLogContent('customTypeWithoutStart');
       // console.log(log);
-      assert(contains(log, 'cluster_log') === 1);
+      assert.equal(contains(log, 'cluster_log'), 1);
     });
 
     it('should handler error', async () => {
@@ -185,8 +188,8 @@ describe('test/schedule.test.ts', () => {
       // app.debug();
       await app.ready();
       await sleep(1000);
-      // app.expect('code', 1);
-      // app.expect('stderr', /should provide clusterId/);
+      app.expect('code', 1);
+      app.expect('stderr', /should provide clusterId/);
     });
   });
 
@@ -196,7 +199,7 @@ describe('test/schedule.test.ts', () => {
       // app.debug();
       await app.ready();
       await sleep(3000);
-      // app.expect('stderr', /schedule\.interval or schedule\.cron or schedule\.immediate must be present/);
+      app.expect('stderr', /schedule\.interval or schedule\.cron or schedule\.immediate must be present/);
     });
   });
 
@@ -205,7 +208,7 @@ describe('test/schedule.test.ts', () => {
       app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
       await app.ready();
       await sleep(3000);
-      // app.expect('stderr', /schedule type \[undefined\] is not defined/);
+      app.expect('stderr', /schedule type \[undefined\] is not defined/);
     });
   });
 
@@ -215,7 +218,7 @@ describe('test/schedule.test.ts', () => {
       // app.debug();
       await app.ready();
       await sleep(1000);
-      // app.expect('stderr', /parse cron instruction\(invalid instruction\) error/);
+      app.expect('stderr', /parse cron instruction\(invalid instruction\) error/);
     });
   });
 
@@ -257,7 +260,7 @@ describe('test/schedule.test.ts', () => {
           interval: 4000,
         },
       };
-      // app.agent.schedule.registerSchedule(schedule);
+      (app as any).agent.schedule.registerSchedule(schedule);
       app.scheduleWorker.registerSchedule(schedule as any);
 
       await app.runSchedule(key);
@@ -282,10 +285,10 @@ describe('test/schedule.test.ts', () => {
           interval: 4000,
         },
       };
-      // app.agent.schedule.registerSchedule(schedule);
+      (app as any).agent.schedule.registerSchedule(schedule);
       app.scheduleWorker.registerSchedule(schedule as any);
 
-      // app.agent.schedule.unregisterSchedule(schedule.key);
+      (app as any).agent.schedule.unregisterSchedule(schedule.key);
       app.scheduleWorker.unregisterSchedule(schedule.key);
 
       let err: any;
@@ -574,11 +577,6 @@ function getLogContent(name: string) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, `${name}-web.log`);
   return fs.readFileSync(logPath, 'utf8');
 }
-
-// function getErrorLogContent(name) {
-//   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'common-error.log');
-//   return fs.readFileSync(logPath, 'utf8');
-// }
 
 function getAgentLogContent(name: string) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, 'egg-agent.log');

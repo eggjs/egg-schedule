@@ -1,8 +1,11 @@
+import { debuglog } from 'node:util';
 import path from 'node:path';
 import type {
   Application, ILifecycleBoot, EggLogger,
 } from 'egg';
 import { ScheduleItem, ScheduleJobInfo } from './lib/types.js';
+
+const debug = debuglog('@eggjs/schedule/app');
 
 export default class Boot implements ILifecycleBoot {
   #app: Application;
@@ -13,6 +16,7 @@ export default class Boot implements ILifecycleBoot {
   }
 
   async didLoad(): Promise<void> {
+    debug('didLoad');
     const scheduleWorker = this.#app.scheduleWorker;
     await scheduleWorker.init();
 
@@ -26,6 +30,7 @@ export default class Boot implements ILifecycleBoot {
 
     // register schedule event
     this.#app.messenger.on('egg-schedule', async info => {
+      debug('app got "egg-schedule" message: %o', info);
       const { id, key } = info;
       this.#logger.debug(`[Job#${id}] ${key} await app ready`);
       await this.#app.ready();

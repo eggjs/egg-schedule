@@ -1,7 +1,10 @@
+import { debuglog } from 'node:util';
 import type { Agent, ILifecycleBoot } from 'egg';
 import { WorkerStrategy } from './lib/strategy/worker.js';
 import { AllStrategy } from './lib/strategy/all.js';
 import { ScheduleJobInfo } from './lib/types.js';
+
+const debug = debuglog('@eggjs/schedule/agent');
 
 export default class Boot implements ILifecycleBoot {
   #agent: Agent;
@@ -26,6 +29,7 @@ export default class Boot implements ILifecycleBoot {
     this.#agent.messenger.once('egg-ready', () => {
       // start schedule after worker ready
       this.#agent.schedule.start();
+      debug('got egg-ready event, schedule start');
     });
   }
 }

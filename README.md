@@ -5,12 +5,13 @@
 [![Test coverage][codecov-image]][codecov-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/schedule.svg?style=flat)](https://nodejs.org/en/download/)
 
 [npm-image]: https://img.shields.io/npm/v/@eggjs/schedule.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/@eggjs/schedule
 [codecov-image]: https://codecov.io/github/eggjs/egg-schedule/coverage.svg?branch=master
 [codecov-url]: https://codecov.io/github/eggjs/egg-schedule?branch=master
-[snyk-image]: https://snyk.io/test/npm/egg-schedule/badge.svg?style=flat-square
+[snyk-image]: https://snyk.io/test/npm/@eggjs/schedule/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/@eggjs/schedule
 [download-image]: https://img.shields.io/npm/dm/@eggjs/schedule.svg?style=flat-square
 [download-url]: https://npmjs.org/package/@eggjs/schedule

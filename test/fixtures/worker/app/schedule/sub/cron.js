@@ -1,5 +1,3 @@
-'use strict';
-
 exports.schedule = {
   type: 'worker',
   cron: '*/5 * * * * *',

@@ -21,7 +21,7 @@ export default {
   get schedule() {
     if (!this[SCHEDULE]) {
       this[SCHEDULE] = new Schedule(this);
-      this.beforeClose(() => {
+      this.lifecycle.registerBeforeClose(() => {
         return this[SCHEDULE].close();
       });
     }

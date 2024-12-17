@@ -2,6 +2,7 @@ import path from 'node:path';
 import assert from 'node:assert';
 import { stringify } from 'node:querystring';
 import { isClass, isFunction, isGeneratorFunction } from 'is-type-of';
+import { importResolve } from '@eggjs/utils';
 import type { EggApplicationCore, EggContext } from 'egg';
 import type { EggScheduleConfig, EggScheduleTask, EggScheduleItem } from './types.js';
 
@@ -42,7 +43,7 @@ function getScheduleLoader(app: EggApplicationCore) {
         }
 
         // handle symlink case
-        const realFullpath = require.resolve(fullpath);
+        const realFullpath = importResolve(fullpath);
         target[realFullpath] = {
           schedule: scheduleConfig,
           scheduleQueryString: stringify(scheduleConfig as any),

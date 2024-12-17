@@ -1,7 +1,7 @@
 import path from 'node:path';
 import assert from 'node:assert';
 import { stringify } from 'node:querystring';
-import { isClass, isFunction } from 'is-type-of';
+import { isClass, isFunction, isGeneratorFunction } from 'is-type-of';
 import type { EggApplicationCore, EggContext } from 'egg';
 import type { ScheduleConfig, ScheduleTask, ScheduleItem } from './types.js';
 
@@ -20,12 +20,16 @@ function getScheduleLoader(app: EggApplicationCore) {
 
         let task: ScheduleTask;
         if (isClass(schedule)) {
+          assert(!isGeneratorFunction(schedule.prototype.subscribe),
+            `schedule(${fullpath}): "schedule" generator function is not support, should use async function instead`);
           task = async (ctx: EggContext, ...args: any[]) => {
             const instance = new schedule(ctx);
             // s.subscribe = app.toAsyncFunction(s.subscribe);
             return instance.subscribe(...args);
           };
         } else {
+          assert(!isGeneratorFunction(schedule.task),
+            `schedule(${fullpath}): "task" generator function is not support, should use async function instead`);
           task = schedule.task;
           // task = app.toAsyncFunction(schedule.task);
         }
@@ -33,7 +37,7 @@ function getScheduleLoader(app: EggApplicationCore) {
         const env = app.config.env;
         const envList = schedule.schedule.env;
         if (Array.isArray(envList) && !envList.includes(env)) {
-          app.coreLogger.info(`[egg-schedule]: ignore schedule ${fullpath} due to \`schedule.env\` not match`);
+          app.coreLogger.info(`[@eggjs/schedule]: ignore schedule ${fullpath} due to \`schedule.env\` not match`);
           continue;
         }
 

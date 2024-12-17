@@ -1,5 +1,3 @@
-'use strict';
-
 const Subscription = require('egg').Subscription;
 
 class Interval extends Subscription {
@@ -10,7 +8,7 @@ class Interval extends Subscription {
     };
   }
 
-  * subscribe() {
+  async subscribe() {
     this.ctx.logger.info('interval');
   }
 }

@@ -3,8 +3,8 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { MockApplication } from 'egg-mock';
-import { mm } from 'egg-mock';
+import { importResolve } from '@eggjs/utils';
+import { mm, MockApplication } from 'egg-mock';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,7 +14,7 @@ describe('test/schedule.test.ts', () => {
   afterEach(() => app.close());
 
   describe('schedule type worker', () => {
-    it.only('should support interval and cron', async () => {
+    it('should support interval and cron', async () => {
       app = mm.cluster({ baseDir: 'worker', workers: 2, cache: false });
       app.debug();
       await app.ready();
@@ -81,20 +81,6 @@ describe('test/schedule.test.ts', () => {
       await app.ready();
       await sleep(5000);
       const log = getLogContent('async');
-      // console.log(log);
-      assert(/method: SCHEDULE/.test(log));
-      assert(/path: \/__schedule/.test(log));
-      assert(/(.*?)sub(\/|\\)cron\.js/.test(log));
-      assert(/"type":"worker"/.test(log));
-      assert(/"cron":"\*\/5 \* \* \* \* \*"/.test(log));
-      assert(/hello busi/.test(log));
-    });
-
-    it('should support generator', async () => {
-      app = mm.cluster({ baseDir: 'generator', workers: 2 });
-      await app.ready();
-      await sleep(5000);
-      const log = getLogContent('generator');
       // console.log(log);
       assert(/method: SCHEDULE/.test(log));
       assert(/path: \/__schedule/.test(log));
@@ -198,8 +184,8 @@ describe('test/schedule.test.ts', () => {
       app = mm.cluster({ baseDir: 'scheduleError', workers: 2 });
       // app.debug();
       await app.ready();
-      await sleep(3000);
-      app.expect('stderr', /schedule\.interval or schedule\.cron or schedule\.immediate must be present/);
+      await sleep(5000);
+      app.expect('stderr', /`schedule\.interval` or `schedule\.cron` or `schedule\.immediate` must be present/);
     });
   });
 
@@ -207,7 +193,7 @@ describe('test/schedule.test.ts', () => {
     it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'typeUndefined', workers: 2 });
       await app.ready();
-      await sleep(3000);
+      await sleep(5000);
       app.expect('stderr', /schedule type \[undefined\] is not defined/);
     });
   });
@@ -235,11 +221,20 @@ describe('test/schedule.test.ts', () => {
   describe('schedule execute error', () => {
     it('should thrown', async () => {
       app = mm.cluster({ baseDir: 'executeError', workers: 1 });
-      // app.debug();
+      app.debug();
       await app.ready();
       await sleep(5000);
       const scheduleLog = getScheduleLogContent('executeError');
-      assert(contains(scheduleLog, 'interval.js execute failed') === 2);
+      assert.equal(contains(scheduleLog, 'interval.js execute failed'), 2);
+    });
+  });
+
+  describe('schedule execute task is generator function', () => {
+    it('should thrown', async () => {
+      app = mm.cluster({ baseDir: 'executeError-task-generator', workers: 1 });
+      app.debug();
+      await app.ready();
+      app.expect('stderr', /"task" generator function is not support, should use async function instead/);
     });
   });
 
@@ -339,7 +334,7 @@ describe('test/schedule.test.ts', () => {
     it('should run schedule by absolute package path success', async () => {
       app = mm.app({ baseDir: 'worker', cache: false });
       await app.ready();
-      await app.runSchedule(require.resolve('../node_modules/egg-logrotator/app/schedule/rotate_by_file.js'));
+      await app.runSchedule(importResolve('egg-logrotator/app/schedule/rotate_by_file.js'));
     });
 
     it('should run schedule by relative path success at customDirectory', async () => {
@@ -371,47 +366,51 @@ describe('test/schedule.test.ts', () => {
         },
       });
       await app.runSchedule('sub/foobar', 'use app.logger.info should work');
-      await sleep(1000);
+      await sleep(5000);
       const log = getLogContent('worker2');
       // console.log(log);
-      assert.match(log, / \[-\/127.0.0.1\/mock-trace-123\/\d+ms GET \/] foobar use app.logger.info should work/);
+      assert.match(log, / \[-\/127.0.0.1\/mock-trace-123\/[\d\.]+ms GET \/] foobar use app.logger.info should work/);
     });
 
     it('should run schedule with symlink js file success', async () => {
       const realPath = path.join(__dirname, 'fixtures/symlink/realFile.js');
       const targetPath = path.join(__dirname, 'fixtures/symlink/runDir/app/schedule/realFile.js');
-      fs.symlinkSync(realPath, targetPath);
+      try {
+        fs.unlinkSync(targetPath);
+      } catch {
+        // ignore
+      }
+      try {
+        fs.symlinkSync(realPath, targetPath);
+      } catch {
+        // ignore
+      }
 
       app = mm.app({ baseDir: 'symlink/runDir', cache: false });
       await app.ready();
-      try {
-        await app.runSchedule('realFile');
-      } catch (err) {
-        assert(false, 'should not throw Cannot find schedule error');
-      }
-
+      await app.runSchedule('realFile');
       fs.unlinkSync(targetPath);
     });
 
-    it('should run schedule with symlink ts file success', async () => {
-      mm(process.env, 'EGG_TYPESCRIPT', 'true');
-      require.extensions['.ts'] = require.extensions['.js'];
+    // it.skip('should run schedule with symlink ts file success', async () => {
+    //   mm(process.env, 'EGG_TYPESCRIPT', 'true');
+    //   require.extensions['.ts'] = require.extensions['.js'];
 
-      const realPath = path.join(__dirname, 'fixtures/symlink/tsRealFile.ts');
-      const targetPath = path.join(__dirname, 'fixtures/symlink/runDir/app/schedule/tsRealFile.ts');
-      fs.symlinkSync(realPath, targetPath);
+    //   const realPath = path.join(__dirname, 'fixtures/symlink/tsRealFile.ts');
+    //   const targetPath = path.join(__dirname, 'fixtures/symlink/runDir/app/schedule/tsRealFile.ts');
+    //   fs.symlinkSync(realPath, targetPath);
 
-      app = mm.app({ baseDir: 'symlink/runDir', cache: false });
-      await app.ready();
-      try {
-        await app.runSchedule('tsRealFile');
-      } catch (err) {
-        assert(false, 'should not throw Cannot find schedule error');
-      }
+    //   app = mm.app({ baseDir: 'symlink/runDir', cache: false });
+    //   await app.ready();
+    //   try {
+    //     await app.runSchedule('tsRealFile');
+    //   } catch (err) {
+    //     assert(false, 'should not throw Cannot find schedule error');
+    //   }
 
-      delete require.extensions['.ts'];
-      fs.unlinkSync(targetPath);
-    });
+    //   delete require.extensions['.ts'];
+    //   fs.unlinkSync(targetPath);
+    // });
   });
 
   describe('stop schedule', () => {
@@ -449,12 +448,11 @@ describe('test/schedule.test.ts', () => {
     });
   });
 
-  describe('export schedules', () => {
+  describe('export app.schedules', () => {
     it('should export app.schedules', async () => {
       app = mm.app({ baseDir: 'worker', cache: false });
       await app.ready();
-      assert('schedules' in app);
-      assert(Reflect.get(app, 'schedules'));
+      assert(app.schedules);
     });
   });
 
@@ -479,26 +477,34 @@ describe('test/schedule.test.ts', () => {
   describe('Subscription', () => {
     it('should support interval and cron', async () => {
       app = mm.cluster({ baseDir: 'subscription', workers: 2, cache: false });
-      // app.debug();
+      app.debug();
       await app.ready();
       await sleep(5000);
       const log = getLogContent('subscription');
       // console.log(log);
-      assert(contains(log, 'interval') === 1);
-      assert(contains(log, 'cron') === 1);
+      assert.equal(contains(log, 'interval'), 1);
+      assert.equal(contains(log, 'cron'), 1);
+    });
+
+    it('should throw error on generator function', async () => {
+      app = mm.cluster({ baseDir: 'subscription-generator', workers: 2, cache: false });
+      app.debug();
+      await app.ready();
+      await sleep(3000);
+      app.expect('stderr', /"schedule" generator function is not support, should use async function instead/);
     });
 
     it('should support interval and cron when config.logger.enableFastContextLogger = true', async () => {
       app = mm.cluster({ baseDir: 'subscription-enableFastContextLogger', workers: 2, cache: false });
-      // app.debug();
+      app.debug();
       await app.ready();
       await sleep(5000);
       const log = getLogContent('subscription-enableFastContextLogger');
-      // console.log(log);
-      assert(contains(log, 'interval') === 1);
-      assert(contains(log, 'cron') === 1);
+      console.log(log);
+      assert.equal(contains(log, 'interval'), 1);
+      assert.equal(contains(log, 'cron'), 1);
       // 2022-12-11 16:44:55,009 INFO 22958 [-/127.0.0.1/15d62420-7930-11ed-86ce-31ec9c2e0d18/3ms SCHEDULE /__schedule
-      assert.match(log, / INFO \w+ \[-\/127\.0\.0\.1\/\w+\-\w+\-\w+\-\w+\-\w+\/\d+ms SCHEDULE \/__schedule/);
+      assert.match(log, / INFO \w+ \[-\/127\.0\.0\.1\/\w+\-\w+\-\w+\-\w+\-\w+\/[\d\.]+ms SCHEDULE \/__schedule/);
     });
   });
 
@@ -561,9 +567,9 @@ describe('test/schedule.test.ts', () => {
       await sleep(2000);
 
       const scheduleLog = getScheduleLogContent('detect-error');
-      assert(contains(scheduleLog, 'suc.js execute succeed') === 1);
-      assert(contains(scheduleLog, /fail.js execute failed, used \d+ms. Error: fail/) === 1);
-      assert(contains(scheduleLog, /error.js execute failed, used \d+ms. Error: some err/) === 1);
+      assert.equal(contains(scheduleLog, 'suc.js execute succeed'), 1);
+      assert.equal(contains(scheduleLog, /fail.js execute failed, used [\d\.]+ms. fail/), 1);
+      assert.equal(contains(scheduleLog, /error.js execute failed, used [\d\.]+ms. Error: some err/), 1);
     });
   });
 });

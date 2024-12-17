@@ -15,7 +15,7 @@ export abstract class TimerStrategy extends BaseStrategy {
 
     const { interval, cron, cronOptions, immediate } = this.scheduleConfig;
     assert(interval || cron || immediate,
-      `[egg-schedule] ${this.key} \`schedule.interval\` or \`schedule.cron]\` or \`schedule.immediate\` must be present`);
+      `[@eggjs/schedule] ${this.key} \`schedule.interval\` or \`schedule.cron\` or \`schedule.immediate\` must be present`);
 
     // init cron parser
     if (cron) {
@@ -23,14 +23,14 @@ export abstract class TimerStrategy extends BaseStrategy {
         this.cronInstance = parseExpression(cron, cronOptions);
       } catch (err: any) {
         throw new TypeError(
-          `[egg-schedule] ${this.key} parse cron instruction(${cron}) error: ${err.message}`,
+          `[@eggjs/schedule] ${this.key} parse cron instruction(${cron}) error: ${err.message}`,
           { cause: err });
       }
     }
   }
 
   protected handler() {
-    throw new TypeError(`[egg-schedule] ${this.key} strategy should override \`handler()\` method`);
+    throw new TypeError(`[@eggjs/schedule] ${this.key} strategy should override \`handler()\` method`);
   }
 
 

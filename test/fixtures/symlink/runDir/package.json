@@ -1,3 +1,4 @@
 {
-  "name": "symlink"
+  "name": "symlink",
+  "type": "module"
 }

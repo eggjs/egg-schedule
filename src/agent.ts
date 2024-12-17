@@ -25,11 +25,12 @@ export default class Boot implements ILifecycleBoot {
       // get job info from worker
       this.#agent.schedule.onJobFinish(info);
     });
+    debug('didLoad');
+  }
 
-    this.#agent.messenger.once('egg-ready', () => {
-      // start schedule after worker ready
-      this.#agent.schedule.start();
-      debug('got egg-ready event, schedule start');
-    });
+  async serverDidReady(): Promise<void> {
+    // start schedule after worker ready
+    this.#agent.schedule.start();
+    debug('serverDidReady, schedule start');
   }
 }

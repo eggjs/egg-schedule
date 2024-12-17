@@ -24,6 +24,7 @@
     "cron"
   ],
   "dependencies": {
+    "@eggjs/utils": "^4.0.3",
     "cron-parser": "^4.9.0",
     "humanize-ms": "^2.0.0",
     "is-type-of": "^2.1.0",
@@ -38,6 +39,7 @@
     "@types/safe-timers": "^1.1.2",
     "egg": "beta",
     "egg-bin": "6",
+    "egg-logrotator": "^3.2.0",
     "egg-mock": "beta",
     "egg-tracer": "2",
     "eslint": "8",

@@ -3,6 +3,7 @@ import path from 'node:path';
 import type {
   Application, ILifecycleBoot, EggLogger,
 } from 'egg';
+import { importResolve } from '@eggjs/utils';
 import { ScheduleItem, ScheduleJobInfo } from './lib/types.js';
 
 const debug = debuglog('@eggjs/schedule/app');
@@ -16,7 +17,6 @@ export default class Boot implements ILifecycleBoot {
   }
 
   async didLoad(): Promise<void> {
-    debug('didLoad');
     const scheduleWorker = this.#app.scheduleWorker;
     await scheduleWorker.init();
 
@@ -24,7 +24,7 @@ export default class Boot implements ILifecycleBoot {
     for (const s in scheduleWorker.scheduleItems) {
       const schedule = scheduleWorker.scheduleItems[s];
       if (!schedule.schedule.disable) {
-        this.#logger.info('[egg-schedule]: register schedule %s', schedule.key);
+        this.#logger.info('[@eggjs/schedule]: register schedule %s', schedule.key);
       }
     }
 
@@ -66,9 +66,9 @@ export default class Boot implements ILifecycleBoot {
           return await schedule.task(ctx, ...info.args);
         });
         success = true;
-      } catch (err) {
+      } catch (err: any) {
         success = false;
-        throw err;
+        e = err;
       }
 
       const rt = Date.now() - start;
@@ -97,20 +97,24 @@ export default class Boot implements ILifecycleBoot {
       ...config.schedule.directory,
     ];
     const runSchedule = async (schedulePath: string, ...args: any[]) => {
+      debug('[runSchedule] start schedulePath: %o, args: %o', schedulePath, args);
+
       // resolve real path
       if (path.isAbsolute(schedulePath)) {
-        schedulePath = require.resolve(schedulePath);
+        schedulePath = importResolve(schedulePath);
       } else {
         for (const dir of directory) {
+          const trySchedulePath = path.join(dir, schedulePath);
           try {
-            schedulePath = require.resolve(path.join(dir, schedulePath));
+            schedulePath = importResolve(trySchedulePath);
             break;
-          } catch (_) {
-            /* istanbul ignore next */
+          } catch (err) {
+            debug('[runSchedule] importResolve %o error: %s', trySchedulePath, err);
           }
         }
       }
 
+      debug('[runSchedule] resolve schedulePath: %o', schedulePath);
       let schedule: ScheduleItem;
       try {
         schedule = scheduleWorker.scheduleItems[schedulePath];
@@ -118,7 +122,7 @@ export default class Boot implements ILifecycleBoot {
           throw new Error(`Cannot find schedule ${schedulePath}`);
         }
       } catch (err: any) {
-        err.message = `[egg-schedule] ${err.message}`;
+        err.message = `[@eggjs/schedule] ${err.message}`;
         throw err;
       }
 
@@ -132,5 +136,7 @@ export default class Boot implements ILifecycleBoot {
       });
     };
     Reflect.set(this.#app, 'runSchedule', runSchedule);
+
+    debug('didLoad');
   }
 }

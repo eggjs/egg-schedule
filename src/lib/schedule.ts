@@ -1,7 +1,10 @@
+import { debuglog } from 'node:util';
 import type { Agent, EggLogger } from 'egg';
 import { loadSchedule } from './load_schedule.js';
 import type { ScheduleItem, ScheduleJobInfo } from './types.js';
 import type { BaseStrategy } from './strategy/base.js';
+
+const debug = debuglog('@eggjs/schedule/lib/schedule');
 
 export class Schedule {
   closed = false;
@@ -23,6 +26,7 @@ export class Schedule {
    */
   use(type: string, clz: typeof BaseStrategy) {
     this.#strategyClassMap.set(type, clz);
+    debug('use type: %o', type);
   }
 
   /**
@@ -38,7 +42,9 @@ export class Schedule {
   registerSchedule(scheduleItem: ScheduleItem) {
     const { key, schedule } = scheduleItem;
     const type = schedule.type;
-    if (schedule.disable) return;
+    if (schedule.disable) {
+      return;
+    }
 
     // find Strategy by type
     const Strategy = this.#strategyClassMap.get(type!);
@@ -51,9 +57,11 @@ export class Schedule {
     // Initialize strategy and register
     const instance = new Strategy(schedule, this.#agent, key);
     this.#strategyInstanceMap.set(key, instance);
+    debug('registerSchedule type: %o, config: %o, key: %o', type, schedule, key);
   }
 
   unregisterSchedule(key: string) {
+    debug('unregisterSchedule key: %o', key);
     return this.#strategyInstanceMap.delete(key);
   }
 
@@ -75,6 +83,7 @@ export class Schedule {
    * start schedule
    */
   start() {
+    debug('start');
     this.closed = false;
     for (const instance of this.#strategyInstanceMap.values()) {
       instance.start();
@@ -86,5 +95,6 @@ export class Schedule {
     for (const instance of this.#strategyInstanceMap.values()) {
       instance.close();
     }
+    debug('close');
   }
 }

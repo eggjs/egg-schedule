@@ -4,7 +4,7 @@ import type { ScheduleItem } from './types.js';
 
 export class ScheduleWorker {
   #app: Application;
-  scheduleItems: Record<string, ScheduleItem>;
+  scheduleItems: Record<string, ScheduleItem> = {};
 
   constructor(app: Application) {
     this.#app = app;

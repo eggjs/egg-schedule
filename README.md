@@ -1,7 +1,7 @@
 # @eggjs/schedule
 
 [![NPM version][npm-image]][npm-url]
-[![Node.js CI](https://github.com/eggjs/egg-schedule/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/egg-schedule/actions/workflows/nodejs.yml)
+[![Node.js CI](https://github.com/eggjs/schedule/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/schedule/actions/workflows/nodejs.yml)
 [![Test coverage][codecov-image]][codecov-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
@@ -9,8 +9,8 @@
 
 [npm-image]: https://img.shields.io/npm/v/@eggjs/schedule.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/@eggjs/schedule
-[codecov-image]: https://codecov.io/github/eggjs/egg-schedule/coverage.svg?branch=master
-[codecov-url]: https://codecov.io/github/eggjs/egg-schedule?branch=master
+[codecov-image]: https://codecov.io/github/eggjs/schedule/coverage.svg?branch=master
+[codecov-url]: https://codecov.io/github/eggjs/schedule?branch=master
 [snyk-image]: https://snyk.io/test/npm/@eggjs/schedule/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/@eggjs/schedule
 [download-image]: https://img.shields.io/npm/dm/@eggjs/schedule.svg?style=flat-square
@@ -252,7 +252,7 @@ export default (app: Application) => {
 
 ### Logging
 
-See `${appInfo.root}/logs/{app_name}/egg-schedule.log` which provided by [config.customLogger.scheduleLogger](https://github.com/eggjs/egg-schedule/blob/master/config/config.default.ts).
+See `${appInfo.root}/logs/{app_name}/egg-schedule.log` which provided by [config.customLogger.scheduleLogger](https://github.com/eggjs/schedule/blob/master/src/config/config.default.ts).
 
 ```ts
 // config/config.default.ts
@@ -304,10 +304,10 @@ Please open an issue [here](https://github.com/eggjs/egg/issues).
 
 ## License
 
-[MIT](https://github.com/eggjs/egg-schedule/blob/master/LICENSE)
+[MIT](LICENSE)
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/egg-schedule)](https://github.com/eggjs/egg-schedule/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/schedule)](https://github.com/eggjs/schedule/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).

@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.2](https://github.com/eggjs/schedule/compare/v5.0.1...v5.0.2) (2024-12-20)
+
+
+### Bug Fixes
+
+* import cron-parser default ([#64](https://github.com/eggjs/schedule/issues/64)) ([a368c5a](https://github.com/eggjs/schedule/commit/a368c5a63273d500ef660ca641019e5d1a5e07a9))
+
 ## [5.0.1](https://github.com/eggjs/egg-schedule/compare/v5.0.0...v5.0.1) (2024-12-17)
 
 

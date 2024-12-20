@@ -1,5 +1,6 @@
 import assert from 'node:assert';
-import { parseExpression, type CronExpression } from 'cron-parser';
+import type { CronExpression } from 'cron-parser';
+import cronParser from 'cron-parser';
 import { ms } from 'humanize-ms';
 import safeTimers from 'safe-timers';
 import { logDate } from 'utility';
@@ -20,7 +21,7 @@ export abstract class TimerStrategy extends BaseStrategy {
     // init cron parser
     if (cron) {
       try {
-        this.cronInstance = parseExpression(cron, cronOptions);
+        this.cronInstance = cronParser.parseExpression(cron, cronOptions);
       } catch (err: any) {
         throw new TypeError(
           `[@eggjs/schedule] ${this.key} parse cron instruction(${cron}) error: ${err.message}`,

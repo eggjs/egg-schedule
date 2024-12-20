@@ -1,16 +1,18 @@
+import { Application as EggApplication } from 'egg';
 import { ScheduleWorker } from '../../lib/schedule_worker.js';
 
-const SCHEDULE_WORKER = Symbol('application#scheduleWorker');
+const SCHEDULE_WORKER = Symbol('application scheduleWorker');
 
-export default {
+export default class Application extends EggApplication {
   /**
    * @member app#schedule
    */
   get scheduleWorker() {
-    if (!this[SCHEDULE_WORKER]) {
-      this[SCHEDULE_WORKER] = new ScheduleWorker(this);
+    let scheduleWorker = this[SCHEDULE_WORKER] as ScheduleWorker;
+    if (!scheduleWorker) {
+      this[SCHEDULE_WORKER] = scheduleWorker = new ScheduleWorker(this);
     }
-    return this[SCHEDULE_WORKER];
-  },
-} as any;
+    return scheduleWorker;
+  }
+}
 

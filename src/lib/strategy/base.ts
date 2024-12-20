@@ -1,5 +1,6 @@
-import type { Agent, EggLogger } from 'egg';
+import type { EggLogger } from 'egg';
 import type { EggScheduleConfig, EggScheduleJobInfo } from '../types.js';
+import type Agent from '../../app/extend/agent.js';
 
 export class BaseStrategy {
   protected agent: Agent;
@@ -21,11 +22,11 @@ export class BaseStrategy {
     return this.scheduleConfig;
   }
 
-  start() {
+  async start() {
     // empty loop by default
   }
 
-  close() {
+  async close() {
     this.closed = true;
   }
 

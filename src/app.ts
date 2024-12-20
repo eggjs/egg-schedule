@@ -1,8 +1,9 @@
 import { debuglog } from 'node:util';
 import type {
-  Application, ILifecycleBoot, EggLogger,
+  ILifecycleBoot, EggLogger,
 } from 'egg';
 import type { EggScheduleJobInfo } from './lib/types.js';
+import type Application from './app/extend/application.js';
 
 const debug = debuglog('@eggjs/schedule/app');
 

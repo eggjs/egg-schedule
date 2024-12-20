@@ -1,8 +1,9 @@
 import { debuglog } from 'node:util';
-import type { Agent, EggLogger } from 'egg';
+import type { EggLogger } from 'egg';
 import { loadSchedule } from './load_schedule.js';
 import type { EggScheduleItem, EggScheduleJobInfo } from './types.js';
 import type { BaseStrategy } from './strategy/base.js';
+import type Agent from '../app/extend/agent.js';
 
 const debug = debuglog('@eggjs/schedule/lib/schedule');
 
@@ -30,7 +31,7 @@ export class Schedule {
   }
 
   /**
-   * load all schedule jobs, then initialize and register speical strategy
+   * load all schedule jobs, then initialize and register special strategy
    */
   async init() {
     const scheduleItems = await loadSchedule(this.#agent);
@@ -82,7 +83,7 @@ export class Schedule {
   /**
    * start schedule
    */
-  start() {
+  async start() {
     debug('start');
     this.closed = false;
     for (const instance of this.#strategyInstanceMap.values()) {
@@ -90,10 +91,10 @@ export class Schedule {
     }
   }
 
-  close() {
+  async close() {
     this.closed = true;
     for (const instance of this.#strategyInstanceMap.values()) {
-      instance.close();
+      await instance.close();
     }
     debug('close');
   }

@@ -1,6 +1,6 @@
-import type { Application } from 'egg';
 import { loadSchedule } from './load_schedule.js';
 import type { EggScheduleItem } from './types.js';
+import type Application from '../app/extend/application.js';
 
 export class ScheduleWorker {
   #app: Application;

@@ -1,12 +1,12 @@
 import { debuglog } from 'node:util';
 import path from 'node:path';
 import { importResolve } from '@eggjs/utils';
-import type { ScheduleWorker } from '../../lib/schedule_worker.js';
 import type { EggScheduleItem } from '../../lib/types.js';
+import Application from './application.js';
 
 const debug = debuglog('@eggjs/schedule/app');
 
-export default {
+export default class ApplicationUnittest extends Application {
   async runSchedule(schedulePath: string, ...args: any[]) {
     debug('[runSchedule] start schedulePath: %o, args: %o', schedulePath, args);
     // for test purpose
@@ -32,10 +32,9 @@ export default {
     }
 
     debug('[runSchedule] resolve schedulePath: %o', schedulePath);
-    const scheduleWorker: ScheduleWorker = this.scheduleWorker;
     let schedule: EggScheduleItem;
     try {
-      schedule = scheduleWorker.scheduleItems[schedulePath];
+      schedule = this.scheduleWorker.scheduleItems[schedulePath];
       if (!schedule) {
         throw new TypeError(`Cannot find schedule ${schedulePath}`);
       }
@@ -52,6 +51,6 @@ export default {
     return await this.ctxStorage.run(ctx, async () => {
       return await schedule.task(ctx, ...args);
     });
-  },
-} as any;
+  }
+}
 

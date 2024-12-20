@@ -4,9 +4,9 @@ import cronParser from 'cron-parser';
 import { ms } from 'humanize-ms';
 import safeTimers from 'safe-timers';
 import { logDate } from 'utility';
-import type { Agent } from 'egg';
 import type { EggScheduleConfig } from '../types.js';
 import { BaseStrategy } from './base.js';
+import type Agent from '../../app/extend/agent.js';
 
 export abstract class TimerStrategy extends BaseStrategy {
   protected cronInstance?: CronExpression;
@@ -34,8 +34,7 @@ export abstract class TimerStrategy extends BaseStrategy {
     throw new TypeError(`[@eggjs/schedule] ${this.key} strategy should override \`handler()\` method`);
   }
 
-
-  start() {
+  async start() {
     /* istanbul ignore next */
     if (this.agent.schedule.closed) return;
 

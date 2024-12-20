@@ -1,30 +1,33 @@
+import { Agent as EggAgent } from 'egg';
 import { BaseStrategy } from '../../lib/strategy/base.js';
 import { TimerStrategy } from '../../lib/strategy/timer.js';
 import { Schedule } from '../../lib/schedule.js';
 
-const SCHEDULE = Symbol('agent#schedule');
+const SCHEDULE = Symbol('agent schedule');
 
-export default {
+export default class Agent extends EggAgent {
   /**
    * @member agent#ScheduleStrategy
    */
-  ScheduleStrategy: BaseStrategy,
+  get ScheduleStrategy() {
+    return BaseStrategy;
+  }
 
   /**
    * @member agent#TimerScheduleStrategy
    */
-  TimerScheduleStrategy: TimerStrategy,
+  get TimerScheduleStrategy() {
+    return TimerStrategy;
+  }
 
   /**
    * @member agent#schedule
    */
   get schedule() {
-    if (!this[SCHEDULE]) {
-      this[SCHEDULE] = new Schedule(this);
-      this.lifecycle.registerBeforeClose(() => {
-        return this[SCHEDULE].close();
-      });
+    let schedule = this[SCHEDULE] as Schedule;
+    if (!schedule) {
+      this[SCHEDULE] = schedule = new Schedule(this);
     }
-    return this[SCHEDULE];
-  },
-} as any;
+    return schedule;
+  }
+}
